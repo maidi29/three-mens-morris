@@ -3,7 +3,11 @@ import gameService from "../../services/gameService";
 import socketService from "../../services/socketService";
 import {Room, useStore} from "../../store/store";
 
+const radius = 10;
 const boardSize = 400;
+const rectSize = boardSize-radius;
+const rectWidth = boardSize-radius*2;
+
 
 interface GameProps {
 }
@@ -40,24 +44,35 @@ export function Game({ }: GameProps): JSX.Element {
 
   const drawBoardLines = (context: CanvasRenderingContext2D) => {
       context.strokeStyle = '#000';
-      context.lineWidth = 8;
-      context.strokeRect(0, 0, boardSize, boardSize);
       context.lineWidth = 4;
+      context.strokeRect(radius, radius, rectWidth, rectWidth);
       context.beginPath();
-      context.moveTo(0, 0);
-      context.lineTo(boardSize, boardSize);
-      context.moveTo(boardSize, 0);
-      context.lineTo(0, boardSize);
-      context.moveTo((boardSize / 2), 0);
-      context.lineTo((boardSize / 2), boardSize);
-      context.moveTo(0, (boardSize / 2));
-      context.lineTo(boardSize, (boardSize / 2));
+      context.moveTo(radius, radius);
+      context.lineTo(rectSize, rectSize);
+      context.moveTo(rectSize, radius);
+      context.lineTo(radius, rectSize);
+      context.moveTo(boardSize / 2, radius);
+      context.lineTo(boardSize / 2, rectSize);
+      context.moveTo(radius, boardSize / 2);
+      context.lineTo(rectSize, boardSize / 2);
       context.closePath();
       context.stroke();
   }
 
+  const drawBoardCircles = (context: CanvasRenderingContext2D) => {
+      drawCircle(context, radius,radius,radius);
+      drawCircle(context, radius, rectSize,radius);
+      drawCircle(context, rectSize,radius,radius);
+      drawCircle(context, rectSize,rectSize,radius);
+      drawCircle(context, boardSize/2,boardSize/2,radius);
+      drawCircle(context, boardSize/2,radius,radius);
+      drawCircle(context, radius,boardSize/2,radius);
+      drawCircle(context, rectSize,boardSize/2,radius);
+      drawCircle(context, boardSize/2,rectSize,radius);
+    }
+
   const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number, radius: number) => {
-      context.fillStyle = '#9cadce ';
+      context.fillStyle = '#fff';
       context.beginPath();
       context.arc(x, y, radius, 0, Math.PI *2);
       context.closePath();
@@ -67,15 +82,7 @@ export function Game({ }: GameProps): JSX.Element {
   useEffect(()=> {
     if (context) {
       drawBoardLines(context);
-      drawCircle(context, 0,0,10);
-      drawCircle(context, 0, boardSize,10);
-      drawCircle(context, boardSize,0,10);
-      drawCircle(context, boardSize,boardSize,10);
-      drawCircle(context, boardSize/2,boardSize/2,10);
-      drawCircle(context, boardSize/2,0,10);
-      drawCircle(context, 0,boardSize/2,10);
-      drawCircle(context, boardSize,boardSize/2,10);
-      drawCircle(context, boardSize/2,boardSize,10);
+      drawBoardCircles(context);
     }
   },[context]);
 
@@ -100,6 +107,6 @@ export function Game({ }: GameProps): JSX.Element {
   }, []);
 
   return (
-    <canvas ref={canvasRef} width="800" height="800"></canvas>
+    <canvas ref={canvasRef} width="800" height="800"/>
   );
 }
