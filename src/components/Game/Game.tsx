@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import gameService from "../../services/gameService";
 import socketService from "../../services/socketService";
 import {Room, useStore} from "../../store/store";
+import styles from './Game.module.scss';
 
 const radius = 10;
 const boardSize = 400;
@@ -81,7 +82,7 @@ export function Game({ }: GameProps): JSX.Element {
 
   useEffect(()=> {
     if (context) {
-      drawBoardLines(context);
+      const lines = drawBoardLines(context);
       drawBoardCircles(context);
     }
   },[context]);
@@ -107,6 +108,9 @@ export function Game({ }: GameProps): JSX.Element {
   }, []);
 
   return (
-    <canvas ref={canvasRef} width="800" height="800"/>
+      <div className={styles.game}>
+          <canvas className={styles.canvas} ref={canvasRef} width="800" height="800"/>
+          <button>Button</button>
+      </div>
   );
 }
