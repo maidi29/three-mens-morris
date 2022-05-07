@@ -1,0 +1,58 @@
+{
+  "name": "three-mens-morris",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "i18next": "^21.6.14",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "6",
+    "react-scripts": "4.0.3",
+    "sass": "^1.51.0",
+    "socket.io-client": "^4.1.2",
+    "typescript": "^4.1.2",
+    "zustand": "^3.7.1"
+  },
+  "scripts": {
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "start-client": "set PORT=3006 && react-scripts start",
+    "build-client": "react-scripts build",
+    "build": "react-scripts build && (cd socketio-server && yarn install)",
+    "start": "cd socketio-server && yarn start",
+    "lint": "tslint -c tslint.json src/**/*.{ts,tsx} --fix --format verbose"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "prettier": "^2.6.2",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "tslint-react": "^5.0.0"
+  }
+}
