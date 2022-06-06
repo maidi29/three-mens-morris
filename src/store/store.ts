@@ -10,6 +10,7 @@ export interface Player {
   score: number;
   avatar: string;
   socketId?: string;
+  id: number;
 }
 
 interface AppState {
@@ -21,6 +22,8 @@ interface AppState {
   setGameFinished: (isFinished: boolean) => void;
   resetStore: () => void;
   resetActiveGameButKeepRoom: () => void;
+  activePlayer: number;
+  setActivePlayer: (playerId: number) => void;
 }
 
 
@@ -33,6 +36,8 @@ export const useStore = create<AppState>((set) => ({
   },
   gameFinished: false,
   setGameFinished: (isFinished) => set({ gameFinished: isFinished }),
+    activePlayer: 0,
+    setActivePlayer: (playerId: number) => set( {activePlayer: playerId}),
   resetStore: () =>
     set((state) => {
       state.room = undefined;
