@@ -36,7 +36,7 @@
           cursor: pointer;
         }
         &[disabled] {
-          background: darken(theme.$colorSecondary,20);
+          background: darken(theme.$colorSecondary,40);
         }
       }
     }
