@@ -1,8 +1,15 @@
+@use '../../theme';
 .game {
-  width: 70vw;
-  height: 70vw;
+  width: 50vw;
+  height: 50vw;
   max-width: 800px;
   max-height: 800px;
+
+  svg {
+    * {
+      stroke: theme.$colorSecondary;
+    }
+  }
 }
 
 .canvas {
