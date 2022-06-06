@@ -3,23 +3,27 @@ import gameService from "../../services/gameService";
 import socketService from "../../services/socketService";
 import {Room, useStore} from "../../store/store";
 import styles from './Game.module.scss';
+import {useWindowSize} from "../../hooks/useWindowSize";
 
-const radius = 10;
+/*const radius = 10;
 const boardSize = 400;
 const rectSize = boardSize-radius;
-const rectWidth = boardSize-radius*2;
+const rectWidth = boardSize-radius*2;*/
+
+
+
 
 
 interface GameProps {
 }
 
 export function Game({ }: GameProps): JSX.Element {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
+  const strokeWidth = 5;
   const gameRoom: Room | undefined = useStore(({ room }) => room);
   const { setGameFinished } = useStore();
-  const [listenersAttached, setListenersAttached] = useState(false);
-  const [context, setContext] = useState<CanvasRenderingContext2D>();
+  const [ listenersAttached, setListenersAttached ] = useState(false);
+  const [ widthHeight, setWidthHeight ] = useState(500 - strokeWidth*4);
+  const { height, width } = useWindowSize();
 
   const gameEnd = (isEnd: boolean) => {
     if (socketService.socket) {
@@ -43,62 +47,8 @@ export function Game({ }: GameProps): JSX.Element {
     }
   };
 
-  const drawBoardLines = (context: CanvasRenderingContext2D) => {
-      context.strokeStyle = '#000';
-      context.lineWidth = 4;
-      context.strokeRect(radius, radius, rectWidth, rectWidth);
-      context.beginPath();
-      context.moveTo(radius, radius);
-      context.lineTo(rectSize, rectSize);
-      context.moveTo(rectSize, radius);
-      context.lineTo(radius, rectSize);
-      context.moveTo(boardSize / 2, radius);
-      context.lineTo(boardSize / 2, rectSize);
-      context.moveTo(radius, boardSize / 2);
-      context.lineTo(rectSize, boardSize / 2);
-      context.closePath();
-      context.stroke();
-  }
-
-  const drawBoardCircles = (context: CanvasRenderingContext2D) => {
-      drawCircle(context, radius,radius,radius);
-      drawCircle(context, radius, rectSize,radius);
-      drawCircle(context, rectSize,radius,radius);
-      drawCircle(context, rectSize,rectSize,radius);
-      drawCircle(context, boardSize/2,boardSize/2,radius);
-      drawCircle(context, boardSize/2,radius,radius);
-      drawCircle(context, radius,boardSize/2,radius);
-      drawCircle(context, rectSize,boardSize/2,radius);
-      drawCircle(context, boardSize/2,rectSize,radius);
-    }
-
-  const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number, radius: number) => {
-      context.fillStyle = '#fff';
-      context.beginPath();
-      context.arc(x, y, radius, 0, Math.PI *2);
-      context.closePath();
-      context.fill();
-  }
-
-  useEffect(()=> {
-    if (context) {
-      const lines = drawBoardLines(context);
-      drawBoardCircles(context);
-    }
-  },[context]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.style.width = "400px";
-      canvas.style.height = "400px";
-      const dpi = window.devicePixelRatio;
-      const context = canvas.getContext('2d');
-      if (context)  {
-        context.scale(dpi,dpi);
-        setContext(context);
-      }
-    }
 
     if (!listenersAttached) {
       handlePlayerLeft();
@@ -107,10 +57,28 @@ export function Game({ }: GameProps): JSX.Element {
     }
   }, []);
 
+  /*useEffect(()=> {
+    if (width && height) {
+      const value = Math.min(width, height);
+      setWidthHeight(value*0.7 - strokeWidth*4)
+    }
+  },[width, height])*/
+
+  useEffect(()=> {
+
+  })
+
   return (
       <div className={styles.game}>
-          <canvas className={styles.canvas} ref={canvasRef} width="800" height="800"/>
-          <button>Button</button>
+          <svg id="eDgLJwr7eqf1" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${widthHeight + strokeWidth*4} ${widthHeight + strokeWidth*4}`} shapeRendering="geometricPrecision" textRendering="geometricPrecision">
+              <rect width={widthHeight} height={widthHeight} rx="0" ry="0" transform={`translate(${strokeWidth*2} ${strokeWidth*2})`} paintOrder="stroke fill markers" fill="none" stroke="#000" strokeWidth={strokeWidth} strokeLinecap="round"/>
+              <line x1={-widthHeight/2} y1={-widthHeight/2} x2={widthHeight/2} y2={widthHeight/2} transform={`translate(${(widthHeight + strokeWidth*4)/2} ${(widthHeight + strokeWidth*4)/2})`} fill="none" stroke="#000" strokeWidth={strokeWidth}/>
+              <line x1={widthHeight/2} y1={-widthHeight/2} x2={-widthHeight/2} y2={widthHeight/2} transform={`translate(${(widthHeight + strokeWidth*4)/2} ${(widthHeight + strokeWidth*4)/2})`} fill="none" stroke="#000" strokeWidth={strokeWidth}/>
+              <line x1={-widthHeight/2} y1="0" x2={widthHeight/2} y2="0" transform={`translate(${(widthHeight + strokeWidth*4)/2} ${(widthHeight + strokeWidth*4)/2})`} fill="none" stroke="#000" strokeWidth={strokeWidth}/>
+              <line x1="0" y1={(widthHeight/2)-strokeWidth} x2="0" y2={-((widthHeight/2)+strokeWidth)} transform={`translate(${(widthHeight + strokeWidth*4)/2} ${(widthHeight + strokeWidth*4)/2+strokeWidth})`} fill="none" stroke="#000" strokeWidth={strokeWidth}/>
+          </svg>
+
+          {/*<canvas className={styles.canvas} ref={canvasRef} width="800" height="800"/>*/}
       </div>
   );
 }
