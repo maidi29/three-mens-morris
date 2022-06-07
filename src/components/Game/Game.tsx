@@ -4,6 +4,7 @@ import socketService from "../../services/socketService";
 import {Room, useStore} from "../../store/store";
 import styles from './Game.module.scss';
 import {Stone} from "../Octagon/Stone";
+import classnames from "classnames";
 
 interface GameProps {
 }
@@ -75,7 +76,7 @@ export function Game({ }: GameProps): JSX.Element {
 
   return (
       <div className={styles.game}>
-        <div className={styles.controls}>
+        <div className={classnames(styles.controls)}>
           <h3>Me:</h3>
           {[0,1,2,].map(()=>(
               <Stone emoji="👽"/>
