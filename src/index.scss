@@ -20,6 +20,7 @@ body {
   font-family: theme.$fontFamily;
   -webkit-font-smoothing: antialiased;
   background-color: theme.$colorPrimary;
+  color: theme.$colorSecondary;
 }
 
 a {
