@@ -13,8 +13,7 @@ interface JoinInfo {
 }
 
 interface Player {
-  playerName: string,
-  score: number,
+  symbol: string,
   img: string,
   socketId?: string
 }
@@ -33,29 +32,16 @@ export class RoomController {
         error: "noRoomWithThisId",
       });
     } else {
-      let allPlayers = room['allPlayers'] || [];
-      if (allPlayers.find((player)=>player.playerName === message.player.playerName)) {
+      let otherPlayer = room['otherPlayer'] || [];
+      if (otherPlayer.symbol === message.player.symbol) {
         socket.emit("room_join_error", {
-          error: "playerNameAlreadyTaken",
+          error: "symbolAlreadyTaken",
         });
       } else {
-        let gameMaster = room['gameMaster'];
-        let sessionname = room['sessionname'] || '';
-        let mode = room['mode'] || '';
         message.player.socketId = socket.id;
-        io.sockets.adapter.rooms.get(message.roomId)['allPlayers'] = [
-          ...allPlayers.filter(
-              (player) => player.playerName !== message.player.playerName
-          ),
-          message.player
-        ];
-        allPlayers = io.sockets.adapter.rooms.get(message.roomId)['allPlayers'];
         await socket.join(message.roomId);
         socket.emit("room_joined", {
-          players: allPlayers,
-          gameMaster: gameMaster,
-          sessionname: sessionname,
-          mode: mode
+          otherPlayer,
         });
         socket.broadcast.to(message.roomId).emit("player_joined", message.player);
       }
@@ -70,7 +56,6 @@ export class RoomController {
   ) {
     const roomId = (Math.floor(Math.random()*90000) + 10000).toString();
     await socket.join(roomId);
-    io.sockets.adapter.rooms.get(roomId)['gameMaster'] = message;
     socket.emit("room_created", roomId);
   }
 }

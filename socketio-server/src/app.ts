@@ -6,16 +6,16 @@ var logger = require("morgan");
 import "reflect-metadata";
 
 var indexRouter = require("./routes/index");
-const buildPath = path.join(__dirname, 'public');
+ // const buildPath = path.join(__dirname, 'public');
 // for heroku
-// const buildPath = path.join(__dirname, '../..', 'build');
+const buildPath = path.join(__dirname, '../..', 'build');
 
 var app = express();
 
 // for heroku
-/*app.set('views', buildPath);
+app.set('views', buildPath);
 app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');*/
+app.set('view engine', 'html');
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -27,9 +27,9 @@ app.use(express.static(buildPath));
 app.use("/", indexRouter);
 
 // for heroku
-/* app.get('/*', function (req, res) {
+app.get('/*', function (req, res) {
   res.sendFile(path.join(buildPath, 'index.html'));
-});*/
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

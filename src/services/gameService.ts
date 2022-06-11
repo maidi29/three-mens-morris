@@ -8,7 +8,6 @@ interface JoinInfo {
 
 interface RoomInfo {
   opponent: Player;
-  sessionname?: string;
 }
 
 class GameService {
