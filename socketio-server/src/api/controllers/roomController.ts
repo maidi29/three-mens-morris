@@ -32,7 +32,7 @@ export class RoomController {
         error: "noRoomWithThisId",
       });
     } else {
-      let otherPlayer = room['otherPlayer'] || [];
+      let otherPlayer = room['master'] || [];
       if (otherPlayer.symbol === message.player.symbol) {
         socket.emit("room_join_error", {
           error: "symbolAlreadyTaken",
@@ -41,7 +41,7 @@ export class RoomController {
         message.player.socketId = socket.id;
         await socket.join(message.roomId);
         socket.emit("room_joined", {
-          otherPlayer,
+          opponent: otherPlayer,
         });
         socket.broadcast.to(message.roomId).emit("player_joined", message.player);
       }
@@ -56,6 +56,7 @@ export class RoomController {
   ) {
     const roomId = (Math.floor(Math.random()*90000) + 10000).toString();
     await socket.join(roomId);
+    io.sockets.adapter.rooms.get(roomId)['master'] = message;
     socket.emit("room_created", roomId);
   }
 }

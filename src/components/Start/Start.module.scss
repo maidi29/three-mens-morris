@@ -1,2 +1,13 @@
 @use '../../theme';
-
+.centerColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+.start {
+  display: flex;
+  gap: 2rem;
+  flex-direction: row;
+  align-items: flex-end;
+}

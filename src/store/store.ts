@@ -2,7 +2,6 @@ import create from "zustand";
 
 export interface Room {
   roomId: string;
-  sessionname?: string;
 }
 
 export interface Player {

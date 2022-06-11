@@ -20,7 +20,7 @@ export function Game({ }: GameProps): JSX.Element {
     [null, null, null],
     [null, null, null],
   ]);
-  const { setGameFinished, setActivePlayer, room, activePlayer, winner, setWinner } = useStore();
+  const { setGameFinished, setActivePlayer, room, activePlayer, winner, setWinner, opponent, me, setOpponent } = useStore();
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
   const [adjacentFields, setAdjacentFields] = useState(new Set<Coordinate>());
@@ -67,6 +67,15 @@ export function Game({ }: GameProps): JSX.Element {
     }
   };
 
+  const handlePlayerJoin = () => {
+    if (socketService.socket) {
+      gameService.onPlayerJoined(socketService.socket, (player) => {
+        player.score = 0;
+        setOpponent(player);
+      });
+    }
+  };
+
 
   useEffect(() => {
     checkWinner(matrix);
@@ -76,17 +85,21 @@ export function Game({ }: GameProps): JSX.Element {
   useEffect(() => {
     if (!listenersAttached) {
       handlePlayerLeft();
+      handlePlayerJoin();
       handleGameEnd();
       setListenersAttached(true);
     }
   }, []);
 
   return (
-      <div className={styles.game}>
+      <>
+      <h2>{room?.roomId}</h2>
+
+  <div className={styles.game}>
         <div className={classnames(styles.controls)}>
-          <h3>Me:</h3>
+          <h3>Me: {me?.id}</h3>
           {[0,1,2,].map(()=>(
-              <Stone emoji="👽"/>
+              <Stone emoji={me?.symbol || '👽'}/>
           ))}
         </div>
         <div className={styles.board}>
@@ -112,13 +125,18 @@ export function Game({ }: GameProps): JSX.Element {
           </div>
       </div>
 
-        <div className={styles.controls}>
-          <h3>Opponent:</h3>
-          {[0,1,2,].map(()=>(
-                <Stone color="#74f9ab" emoji="🤖"/>
-          ))}
+     <div className={styles.controls}>
+       {opponent ?
+           <>
+             <h3>Opponent: {opponent?.id}</h3>
+             {[0,1,2,].map(()=>(
+                 <Stone color="#74f9ab" emoji={opponent?.symbol || "🤖"}/>
+             ))}
+           </> :
+           <h3>Opponent not yet joined</h3>}
         </div>
 
       </div>
+      </>
   );
 }
