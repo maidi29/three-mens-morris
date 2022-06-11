@@ -10,6 +10,7 @@ interface GameProps {
 }
 
 export type Matrix = Array<Array<number | null>>;
+export type Coordinate = {x: number, y: number};
 
 export function Game({ }: GameProps): JSX.Element {
   const [matrix, setMatrix] = useState<Matrix>([
@@ -19,12 +20,53 @@ export function Game({ }: GameProps): JSX.Element {
   ]);
   const { setGameFinished, setActivePlayer, room, activePlayer } = useStore();
   const [listenersAttached, setListenersAttached] = useState(false);
+  const [winningFields, setWinningFields] = useState<Coordinate[]>([]);
+  const [winnerSymbol, setWinnerSymbol] = useState<number | null>(null);
+  const [adjacentFields, setAdjacentFields] = useState<Coordinate[]>([]);
 
-  const getAdjacentFields = (x: number, y: number): {x: number, y: number}[] =>  {
-    // Todo: check how to find adjacent fields in the most efficient way
-    // check x-1, x+1, y-1, y+1
-    // if diagonal field: check x+-1 & y+-1
-    return [];
+  const getAdjacentFields = (x: number, y: number): void =>  {
+    const betweenIndices = (num: number) => num >= 0 && num <= 2;
+    const nonDiagonalCoordinates = [{x:1, y:0}, {x:2,y:1}, {x:0,y:1}, {x:1,y:2}];
+    setAdjacentFields([
+        {x:x-1,y}, {x:x+1,y},
+        {x,y:y-1}, {x,y:y+1},
+        ...(nonDiagonalCoordinates.some((value)=>value.x === x && value.y === y) ? [] : [{x:x+1,y:y+1}, {x:x-1,y:y-1},
+        {x:x-1,y:y+1}, {x:x+1,y:y-1}])
+    ].filter(({x,y}) => betweenIndices(x) && betweenIndices(y)));
+  }
+
+  const checkWinner = (matrix: Matrix) => {
+    // columns check
+    for (let y = 0; y < 3; y++) {
+      // check if every value in column y is the same and therefore Set has only one value (and is not null)
+      if (matrix[0][y] !== null && (new Set([0,1,2].map((x)=>matrix[x][y]))).size === 1) {
+        setWinnerSymbol(matrix[0][y]); // store first value of winning column as winner symbol
+        setWinningFields([0,1,2].map((x)=>({x,y})));
+        return;
+      }
+    }
+
+    // rows check
+    for (let x = 0; x < 3; x++) {
+      // check if every value in row x is the same and therefore Set has only one value (and is not null)
+      if (matrix[x][0] !== null && (new Set(matrix[x])).size === 1) {
+        setWinnerSymbol(matrix[x][0]); // store first value of winning row as winner symbol
+        setWinningFields(matrix[1].map((value, y) => ({x,y})));
+        return;
+      }
+    }
+
+    // diagonals check
+    // check if middle value is not null and then check the two diagonals for same value
+    if (matrix[1][1] !== null) {
+      if ((new Set([matrix[0][0], matrix[1][1], matrix[2][2]])).size === 1 )  {
+        setWinningFields([{x:0,y:0}, {x:1,y:1}, {x:2,y:2}]);
+        setWinnerSymbol(matrix[1][1]); // store the middle value as winner symbol
+      } else if ((new Set([matrix[0][2], matrix[1][1], matrix[2][0]])).size === 1) {
+        setWinningFields([{x:0,y:2}, {x:1,y:1}, {x:2,y:0}]);
+        setWinnerSymbol(matrix[1][1]); // store the middle value as winner symbol
+      }
+    }
   }
 
 
@@ -63,7 +105,12 @@ export function Game({ }: GameProps): JSX.Element {
 
   useEffect(() => {
     console.log(matrix);
+    checkWinner(matrix);
   }, [matrix]);
+
+  useEffect(() => {
+    console.log('adjacentfields', adjacentFields);
+  }, [adjacentFields]);
 
 
   useEffect(() => {
@@ -95,7 +142,18 @@ export function Game({ }: GameProps): JSX.Element {
             {matrix.map((row, x) => (
                 <div className={styles.row}>
                   {row.map((value, y)=> (
-                      <button className={styles.field} onClick={() =>updateMatrix(x,y,activePlayer)} disabled={value!==null}>{value}</button>
+                      <button
+                          className={classnames(
+                              styles.field,
+                              // Todo: how could be better checked if array (or better set) contains an object
+                              winningFields.some((value)=>value.x === x && value.y === y) && styles.winningField,
+                              adjacentFields.some((value)=>value.x === x && value.y === y) && styles.adjacentField
+                          )}
+                          onClick={() =>{
+                            getAdjacentFields(x,y);
+                            updateMatrix(x,y,activePlayer);
+                          }}
+                          disabled={value!==null}>{value}</button>
                   ))}
                 </div>
             ))}

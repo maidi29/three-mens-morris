@@ -57,6 +57,12 @@
         &[disabled] {
           background: darken(theme.$colorSecondary,40);
         }
+        &.winningField {
+          background: red;
+        }
+        &.adjacentField {
+          background: yellow;
+        }
       }
     }
   }
