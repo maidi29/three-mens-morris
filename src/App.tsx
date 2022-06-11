@@ -17,9 +17,27 @@ function App(): JSX.Element {
     });
   };
 
+  const handleBeforeUnload = useCallback(
+      (e: BeforeUnloadEvent) => {
+        if (!room) return;
+        e.preventDefault();
+        const message = "Attention, you are leaving the game! This can't be undone!";
+        e.returnValue = message;
+        return message;
+      },
+      [room]
+  );
+
   useEffect(() => {
     connectSocket();
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [room, handleBeforeUnload]);
 
   return (
     <div className={styles.container}>
