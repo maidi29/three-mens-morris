@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {Player, Room, useStore} from "../../store/store";
 import styles from './Start.module.scss';
 import socketService from "../../services/socketService";
-import gameService from "../../services/gameService";
+import roomService from "../../services/roomService";
 import Picker, {IEmojiData, SKIN_TONE_NEUTRAL} from 'emoji-picker-react';
 import {Stone} from "../Stone/Stone";
 
@@ -11,7 +11,7 @@ const emojis = [
 ];
 
 export function Start({ }): JSX.Element {
-  const { setRoom, setOpponent, setMe } = useStore();
+  const { setRoom, setOpponent, setMe, setPhase } = useStore();
   const [playerId, setPlayerId] = useState<0 | 1>();
   const [roomName, setRoomName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -51,7 +51,7 @@ export function Start({ }): JSX.Element {
 
     setIsCreating(true);
     if (playerId === 1) {
-      roomInfo = await gameService
+      roomInfo = await roomService
           .joinGameRoom(socket, { player: ownPlayer, roomId: roomName })
           .catch((err) => {
               console.log(err)
@@ -59,9 +59,10 @@ export function Start({ }): JSX.Element {
       if (roomInfo) {
         setRoom({ roomId: roomName });
         setOpponent(roomInfo.opponent);
+        setPhase(1);
       }
     } else {
-      roomId = await gameService
+      roomId = await roomService
           .createGameRoom(socket, ownPlayer)
           .catch((err) => console.log(err));
       if (roomId) {

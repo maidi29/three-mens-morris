@@ -55,7 +55,7 @@
           cursor: pointer;
         }
         &[disabled] {
-          background: darken(theme.$colorSecondary,40);
+          background: darken(theme.$colorSecondary,15);
         }
         &.winningField {
           background: red;

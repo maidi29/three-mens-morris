@@ -7,6 +7,7 @@ import {Stone} from "../Stone/Stone";
 import classnames from "classnames";
 import {checkWinning, coordinateExistsInSet, getAdjacentFields} from "../../utils/boardLogic";
 import {Board} from "../Board/Board";
+import roomService from "../../services/roomService";
 
 interface GameProps {
 }
@@ -20,7 +21,8 @@ export function Game({ }: GameProps): JSX.Element {
     [null, null, null],
     [null, null, null],
   ]);
-  const { setGameFinished, setActivePlayer, room, activePlayer, winner, setWinner, opponent, me, setOpponent } = useStore();
+  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, setPhase } = useStore();
+
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
   const [adjacentFields, setAdjacentFields] = useState(new Set<Coordinate>());
@@ -33,21 +35,36 @@ export function Game({ }: GameProps): JSX.Element {
     }
   }
 
-
-  const updateMatrix = (x: number, y: number, player: 0 | 1) => {
+  const updateMatrix = ({x, y}: Coordinate, value: 0 | 1 | null) => {
     const newMatrix = [...matrix];
-    const newPlayer = activePlayer === 0 ? 1 : 0;
 
     if (newMatrix[x][y] === null) {
-      newMatrix[x][y] = player;
+      newMatrix[x][y] = value;
       setMatrix(newMatrix);
-      setActivePlayer(newPlayer);
     }
   }
 
   const gameEnd = (isEnd: boolean) => {
     if (socketService.socket) {
       gameService.gameEnd(socketService.socket, isEnd);
+    }
+  };
+
+  const turnFinished = (coord: Coordinate) => {
+    if (socketService.socket) {
+      // Todo implement prev coordinate in phase 2
+      console.log('turnfinished');
+      gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId:activePlayer})
+    }
+  };
+
+  const handleTurnFinished = () => {
+    if (socketService.socket) {
+      gameService.onTurnFinished(socketService.socket, (turn) => {
+        if(turn.prevCoordinate) updateMatrix(turn.prevCoordinate, null);
+        updateMatrix(turn.newCoordinate, turn.playerId);
+        setActivePlayer(turn.playerId === 0 ? 1 : 0);
+      });
     }
   };
 
@@ -69,9 +86,10 @@ export function Game({ }: GameProps): JSX.Element {
 
   const handlePlayerJoin = () => {
     if (socketService.socket) {
-      gameService.onPlayerJoined(socketService.socket, (player) => {
+      roomService.onPlayerJoined(socketService.socket, (player) => {
         player.score = 0;
         setOpponent(player);
+        setPhase(1);
       });
     }
   };
@@ -81,12 +99,17 @@ export function Game({ }: GameProps): JSX.Element {
     checkWinner(matrix);
   }, [matrix]);
 
+  useEffect(() => {
+    console.log(activePlayer);
+  }, [activePlayer]);
+
 
   useEffect(() => {
     if (!listenersAttached) {
       handlePlayerLeft();
       handlePlayerJoin();
       handleGameEnd();
+      handleTurnFinished();
       setListenersAttached(true);
     }
   }, []);
@@ -94,6 +117,7 @@ export function Game({ }: GameProps): JSX.Element {
   return (
       <>
       <h2>{room?.roomId}</h2>
+        {activePlayer === me?.id ? <h2>your turn</h2> : <h2>opponents turn</h2>}
 
   <div className={styles.game}>
         <div className={classnames(styles.controls)}>
@@ -115,10 +139,14 @@ export function Game({ }: GameProps): JSX.Element {
                               coordinateExistsInSet( {x,y}, adjacentFields) && styles.adjacentField
                           )}
                           onClick={() =>{
-                            setAdjacentFields(getAdjacentFields(x,y));
-                            updateMatrix(x,y,activePlayer);
+                            if (activePlayer === me?.id) {
+                              console.log(activePlayer, me.id);
+                              // if phase 2 and first click
+                              // setAdjacentFields(getAdjacentFields(x,y));
+                              turnFinished({x,y})
+                            }
                           }}
-                          disabled={value!==null}>{value}</button>
+                          disabled={value!==null}>{value !== null ? value === me?.id ? me?.symbol : opponent?.symbol : ''}</button>
                   ))}
                 </div>
             ))}

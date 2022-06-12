@@ -27,6 +27,8 @@ interface AppState {
   setActivePlayer: (playerId: 0 | 1) => void;
   winner: 0 | 1 | null;
   setWinner: (winner: 0 | 1 | null) => void;
+  phase?: number;
+  setPhase: (phase: number) => void;
 }
 
 
@@ -45,6 +47,8 @@ export const useStore = create<AppState>((set) => ({
     setMe: (player: Player) => set( {me: player}),
     winner: null,
     setWinner: (winner: 0 | 1 | null) => set({winner}),
+    phase: undefined,
+    setPhase: (phase: number) => set({phase}),
     resetStore: () =>
         set((state) => {
             state.room = undefined;

@@ -10,13 +10,13 @@
   width: min-content;
   .emoji {
     position: absolute;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
   }
 }
 .octagon {
   * {
-    fill: theme.$colorTertiary
+    fill: theme.$colorSecondary;
   }
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
 }
