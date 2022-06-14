@@ -9,6 +9,7 @@ import {Start} from "./components/Start/Start";
 
 function App(): JSX.Element {
   const room = useStore((state) => state.room);
+  const me = useStore((state) => state.me);
 
   const connectSocket = async () => {
     await socketService.connect(BASE_API_URL).catch((err) => {
@@ -42,7 +43,7 @@ function App(): JSX.Element {
   return (
     <div className={styles.container}>
       <h1>Three Men's Morris</h1>
-        {room ? (
+        {room && me ? (
             <Game />
         ) : <Start/>}
     </div>

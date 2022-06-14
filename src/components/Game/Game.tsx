@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import gameService from "../../services/gameService";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import gameService, {Turn} from "../../services/gameService";
 import socketService from "../../services/socketService";
 import {Room, useStore} from "../../store/store";
 import styles from './Game.module.scss';
@@ -21,7 +21,7 @@ export function Game({ }: GameProps): JSX.Element {
     [null, null, null],
     [null, null, null],
   ]);
-  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, setPhase } = useStore();
+  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, phase, setPhase, nonPlayedStones, playStone } = useStore();
 
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
@@ -53,7 +53,6 @@ export function Game({ }: GameProps): JSX.Element {
   const turnFinished = (coord: Coordinate) => {
     if (socketService.socket) {
       // Todo implement prev coordinate in phase 2
-      console.log('turnfinished');
       gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId:activePlayer})
     }
   };
@@ -64,6 +63,8 @@ export function Game({ }: GameProps): JSX.Element {
         if(turn.prevCoordinate) updateMatrix(turn.prevCoordinate, null);
         updateMatrix(turn.newCoordinate, turn.playerId);
         setActivePlayer(turn.playerId === 0 ? 1 : 0);
+        console.log(typeof turn.playerId);
+        playStone(turn.playerId);
       });
     }
   };
@@ -100,9 +101,8 @@ export function Game({ }: GameProps): JSX.Element {
   }, [matrix]);
 
   useEffect(() => {
-    console.log(activePlayer);
-  }, [activePlayer]);
-
+    console.log('effect', nonPlayedStones)
+  }, [nonPlayedStones]);
 
   useEffect(() => {
     if (!listenersAttached) {
@@ -116,14 +116,16 @@ export function Game({ }: GameProps): JSX.Element {
 
   return (
       <>
-      <h2>{room?.roomId}</h2>
-        {activePlayer === me?.id ? <h2>your turn</h2> : <h2>opponents turn</h2>}
+      <h2>Room ID: {room?.roomId}</h2>
+        {opponent ?
+            (activePlayer === me?.id ? <h2>your turn</h2> : <h2>opponents turn</h2>) :
+            <>Wait for opponent to join</>}
 
-  <div className={styles.game}>
+      <div className={styles.game}>
         <div className={classnames(styles.controls)}>
-          <h3>Me: {me?.id}</h3>
-          {[0,1,2,].map(()=>(
-              <Stone emoji={me?.symbol || '👽'}/>
+          <h3>Me</h3>
+          {me && nonPlayedStones[me?.id].map(()=>(
+              <Stone emoji={me.symbol || '👽'}/>
           ))}
         </div>
         <div className={styles.board}>
@@ -139,8 +141,7 @@ export function Game({ }: GameProps): JSX.Element {
                               coordinateExistsInSet( {x,y}, adjacentFields) && styles.adjacentField
                           )}
                           onClick={() =>{
-                            if (activePlayer === me?.id) {
-                              console.log(activePlayer, me.id);
+                            if (activePlayer === me?.id && opponent) {
                               // if phase 2 and first click
                               // setAdjacentFields(getAdjacentFields(x,y));
                               turnFinished({x,y})
@@ -154,14 +155,13 @@ export function Game({ }: GameProps): JSX.Element {
       </div>
 
      <div className={styles.controls}>
-       {opponent ?
+       {opponent &&
            <>
              <h3>Opponent: {opponent?.id}</h3>
-             {[0,1,2,].map(()=>(
+             {nonPlayedStones[opponent.id].map(()=>(
                  <Stone color="#74f9ab" emoji={opponent?.symbol || "🤖"}/>
              ))}
-           </> :
-           <h3>Opponent not yet joined</h3>}
+           </>}
         </div>
 
       </div>

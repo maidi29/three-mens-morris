@@ -56,15 +56,26 @@
         }
         &[disabled] {
           background: darken(theme.$colorSecondary,15);
+          color: #000;
         }
         &.winningField {
-          background: red;
+          box-shadow:
+                  0 0 15px 7px #fff, // inner white
+                  0 0 25px 15px #f0f, // middle magenta
+                  0 0 35px 23px #0ff; // outer cyan
         }
         &.adjacentField {
-          background: yellow;
+          animation: blinker 1s linear infinite;
         }
       }
     }
   }
 
+}
+
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }

@@ -8,8 +8,13 @@ export interface Player {
   color: string;
   symbol: string;
   socketId?: string;
-  id: number;
+  id: PLAYER;
   score: number;
+}
+
+export enum PLAYER {
+    ZERO = 0,
+    ONE = 1
 }
 
 interface AppState {
@@ -23,12 +28,14 @@ interface AppState {
   setGameFinished: (isFinished: boolean) => void;
   resetStore: () => void;
   resetActiveGameButKeepRoom: () => void;
-  activePlayer: 0 | 1;
-  setActivePlayer: (playerId: 0 | 1) => void;
-  winner: 0 | 1 | null;
-  setWinner: (winner: 0 | 1 | null) => void;
+  activePlayer: PLAYER;
+  setActivePlayer: (playerId: PLAYER) => void;
+  winner: PLAYER | null;
+  setWinner: (winner: PLAYER | null) => void;
   phase?: number;
   setPhase: (phase: number) => void;
+  nonPlayedStones: { 0: number[], 1: number[]},
+    playStone: (playerId: PLAYER) => void;
 }
 
 
@@ -42,13 +49,22 @@ export const useStore = create<AppState>((set) => ({
     gameFinished: false,
     setGameFinished: (isFinished) => set({ gameFinished: isFinished }),
     activePlayer: 0,
-    setActivePlayer: (playerId: 0 | 1) => set( {activePlayer: playerId}),
+    setActivePlayer: (playerId: PLAYER) => set( {activePlayer: playerId}),
     setOpponent: (player: Player) => set( {opponent: player}),
     setMe: (player: Player) => set( {me: player}),
     winner: null,
-    setWinner: (winner: 0 | 1 | null) => set({winner}),
+    setWinner: (winner: PLAYER | null) => set({winner}),
     phase: undefined,
     setPhase: (phase: number) => set({phase}),
+    nonPlayedStones: {
+        [PLAYER.ZERO]: [0,1,2],
+        [PLAYER.ONE]: [0,1,2]
+    },
+    // todo: set phase
+    playStone: (playerId: PLAYER) =>
+        set(({ nonPlayedStones }) =>
+                ({ nonPlayedStones: { ...nonPlayedStones, [playerId]: nonPlayedStones[playerId].slice(0,-1) } })
+        ),
     resetStore: () =>
         set((state) => {
             state.room = undefined;

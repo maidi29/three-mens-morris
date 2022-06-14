@@ -1,4 +1,4 @@
-# Buzz'n'Click
+# Three Men's Morris
 
 ## Setup
 
@@ -20,24 +20,9 @@ Run
 #### `yarn start` (or `npm start`)
 in the root project directory.
 
-### Static webspace and separate cloud server
-### Frontend
-Run
-#### `yarn build-client` (or `npm build-client`)
-in the root project directory.
-Take the generated content of the 'build' folder and upload it to the webspace (e.g. with FileZilla) 
-
-### Backend
-Connect to the server e.g. with WinSCP and copy all files from socketio-server to the server (except node_modules)
-Connect to the server with PuTTY and run 
-#### `yarn install`
-and then
-#### `pm2 start npm --name "socketio-server" -- -start`
-
-
 
 ## Start locally
-Change the BASE_API_URL varaibale in src/utils/constants.ts to 'http://localhost:3000'.
+Change the BASE_API_URL variable in src/utils/constants.ts to 'http://localhost:3000'.
 
 ### Client
 Run 

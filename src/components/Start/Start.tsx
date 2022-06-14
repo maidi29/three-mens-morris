@@ -44,7 +44,7 @@ export function Start({ }): JSX.Element {
 
     const ownPlayer: Player = {
       symbol: chosenEmoji,
-      id: playerId || 0,
+      id: playerId,
       color: "",
       score: 0
     };

@@ -1,10 +1,11 @@
 import { Socket } from "socket.io-client";
 import {Coordinate} from "../components/Game/Game";
+import {PLAYER} from "../store/store";
 
-interface Turn {
+export interface Turn {
   prevCoordinate?: Coordinate,
   newCoordinate: Coordinate,
-  playerId: 0 | 1
+  playerId: PLAYER
 }
 
 class GameService {

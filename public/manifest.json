@@ -1,20 +1,9 @@
 {
-  "short_name": "Buzz'n'Click",
-  "name": "Buzz'n'Click",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    }
-  ],
+  "short_name": "Three Men's Morris",
+  "name": "Three Men's Morris",
+  "icons": [],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#2bc1fd",
-  "background_color": "#2bc1fd"
+  "theme_color": "#588b8b",
+  "background_color": "#588b8b"
 }
