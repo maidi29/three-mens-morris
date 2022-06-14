@@ -63,7 +63,6 @@ export function Game({ }: GameProps): JSX.Element {
         if(turn.prevCoordinate) updateMatrix(turn.prevCoordinate, null);
         updateMatrix(turn.newCoordinate, turn.playerId);
         setActivePlayer(turn.playerId === 0 ? 1 : 0);
-        console.log(typeof turn.playerId);
         playStone(turn.playerId);
       });
     }
@@ -99,10 +98,6 @@ export function Game({ }: GameProps): JSX.Element {
   useEffect(() => {
     checkWinner(matrix);
   }, [matrix]);
-
-  useEffect(() => {
-    console.log('effect', nonPlayedStones)
-  }, [nonPlayedStones]);
 
   useEffect(() => {
     if (!listenersAttached) {
