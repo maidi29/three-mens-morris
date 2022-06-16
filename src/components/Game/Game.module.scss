@@ -27,7 +27,7 @@
 
   svg {
     position: absolute;
-    padding: 10px;
+    padding: 15px;
     * {
       stroke: theme.$colorSecondary;
     }
@@ -46,16 +46,20 @@
       justify-content: space-between;
 
       .field {
-        height: 2rem;
-        width: 2rem;
-        border-radius: 1rem;
+        height: 3rem;
+        width: 3rem;
+        border-radius: 50%;
         border: 1px solid #000;
         background: theme.$colorSecondary;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         &:not([disabled]) {
           cursor: pointer;
         }
         &[disabled] {
-          background: darken(theme.$colorSecondary,15);
+          background: darken(theme.$colorSecondary,25);
           color: #000;
         }
         &.winningField {

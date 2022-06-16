@@ -39,7 +39,7 @@ interface AppState {
 }
 
 
-export const useStore = create<AppState>((set) => ({
+export const useStore = create<AppState>((set, get) => ({
     me: undefined,
     opponent: undefined,
     room: undefined,
@@ -61,10 +61,21 @@ export const useStore = create<AppState>((set) => ({
         [PLAYER.ONE]: [0,1,2]
     },
     // todo: set phase
-    playStone: (playerId: PLAYER) =>
-        set(({ nonPlayedStones }) =>
-                ({ nonPlayedStones: { ...nonPlayedStones, [playerId]: nonPlayedStones[playerId].slice(0,-1) } })
-        ),
+    playStone: (playerId: PLAYER) => {
+        const phase = get().phase;
+        if (phase === 1) {
+            set(({ nonPlayedStones }) =>
+                    ({ nonPlayedStones: { ...nonPlayedStones, [playerId]: nonPlayedStones[playerId].slice(0,-1) } })
+            );
+            const stones = get().nonPlayedStones;
+            const noMoreStones = Object.values(stones).every((value) => value.length === 0);
+            if(noMoreStones) {
+                set( {phase: 2});
+            }
+        } else if (phase === 2) {
+            console.log('move stone');
+        }
+    },
     resetStore: () =>
         set((state) => {
             state.room = undefined;

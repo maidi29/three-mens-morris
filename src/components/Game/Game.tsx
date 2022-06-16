@@ -1,13 +1,14 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import gameService, {Turn} from "../../services/gameService";
 import socketService from "../../services/socketService";
-import {Room, useStore} from "../../store/store";
+import {PLAYER, Room, useStore} from "../../store/store";
 import styles from './Game.module.scss';
 import {Stone} from "../Stone/Stone";
 import classnames from "classnames";
 import {checkWinning, coordinateExistsInSet, getAdjacentFields} from "../../utils/boardLogic";
 import {Board} from "../Board/Board";
 import roomService from "../../services/roomService";
+import {cpus} from "os";
 
 interface GameProps {
 }
@@ -26,6 +27,8 @@ export function Game({ }: GameProps): JSX.Element {
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
   const [adjacentFields, setAdjacentFields] = useState(new Set<Coordinate>());
+  const [roundClicks, setRoundClicks] = useState(0);
+  const [prevCoordinate, setPrevCoordinate] = useState<Coordinate | undefined>();
 
   const checkWinner = (matrix: Matrix) => {
     const winnerInfo = checkWinning(matrix);
@@ -35,13 +38,16 @@ export function Game({ }: GameProps): JSX.Element {
     }
   }
 
-  const updateMatrix = ({x, y}: Coordinate, value: 0 | 1 | null) => {
+  const updateMatrix = ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => {
     const newMatrix = [...matrix];
 
     if (newMatrix[x][y] === null) {
       newMatrix[x][y] = value;
-      setMatrix(newMatrix);
     }
+    if (toBeRemoved) {
+      matrix[toBeRemoved.x][toBeRemoved.y] = null;
+    }
+    setMatrix(newMatrix);
   }
 
   const gameEnd = (isEnd: boolean) => {
@@ -52,16 +58,16 @@ export function Game({ }: GameProps): JSX.Element {
 
   const turnFinished = (coord: Coordinate) => {
     if (socketService.socket) {
-      // Todo implement prev coordinate in phase 2
-      gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId:activePlayer})
+      setRoundClicks(0);
+      setAdjacentFields(new Set());
+      gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId: activePlayer, ...(phase === 2 && {prevCoordinate})})
     }
   };
 
   const handleTurnFinished = () => {
     if (socketService.socket) {
-      gameService.onTurnFinished(socketService.socket, (turn) => {
-        if(turn.prevCoordinate) updateMatrix(turn.prevCoordinate, null);
-        updateMatrix(turn.newCoordinate, turn.playerId);
+      gameService.onTurnFinished(socketService.socket, (turn: Turn) => {
+        updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
         setActivePlayer(turn.playerId === 0 ? 1 : 0);
         playStone(turn.playerId);
       });
@@ -109,6 +115,23 @@ export function Game({ }: GameProps): JSX.Element {
     }
   }, []);
 
+  const isFieldEnabled = (value: PLAYER | null, coord: Coordinate): boolean => {
+    if(activePlayer === me?.id) {
+      if (phase === 1) {
+        return value === null;
+      } else if (phase === 2) {
+        if (roundClicks === 0) {
+          const emptyAdjacentFields = Array.from(getAdjacentFields(coord)).filter(({x,y}) => matrix[x][y] === null);
+          return value === me?.id && emptyAdjacentFields.length > 0;
+        } else {
+          return coordinateExistsInSet(coord, adjacentFields) && value === null;
+        }
+      }
+      return false;
+    }
+    return false;
+  }
+
   return (
       <>
       <h2>Room ID: {room?.roomId}</h2>
@@ -133,16 +156,20 @@ export function Game({ }: GameProps): JSX.Element {
                           className={classnames(
                               styles.field,
                               coordinateExistsInSet( {x,y}, winningFields) && styles.winningField,
-                              coordinateExistsInSet( {x,y}, adjacentFields) && styles.adjacentField
+                              (coordinateExistsInSet( {x,y}, adjacentFields) && value === null) && styles.adjacentField
                           )}
                           onClick={() =>{
                             if (activePlayer === me?.id && opponent) {
-                              // if phase 2 and first click
-                              // setAdjacentFields(getAdjacentFields(x,y));
-                              turnFinished({x,y})
+                              if (phase === 2 && roundClicks === 0) {
+                                setAdjacentFields(getAdjacentFields({x,y}));
+                                setRoundClicks(roundClicks + 1);
+                                setPrevCoordinate({x,y});
+                              } else {
+                                turnFinished({x,y})
+                              }
                             }
                           }}
-                          disabled={value!==null}>{value !== null ? value === me?.id ? me?.symbol : opponent?.symbol : ''}</button>
+                          disabled={!isFieldEnabled(value, {x,y})}>{value !== null ? value === me?.id ? me?.symbol : opponent?.symbol : ''}</button>
                   ))}
                 </div>
             ))}
