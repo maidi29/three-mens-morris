@@ -1,14 +1,13 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import gameService, {Turn} from "../../services/gameService";
 import socketService from "../../services/socketService";
-import {PLAYER, Room, useStore} from "../../store/store";
+import {PLAYER, useStore} from "../../store/store";
 import styles from './Game.module.scss';
 import {Stone} from "../Stone/Stone";
 import classnames from "classnames";
 import {checkWinning, coordinateExistsInSet, getAdjacentFields} from "../../utils/boardLogic";
 import {Board} from "../Board/Board";
 import roomService from "../../services/roomService";
-import {cpus} from "os";
 
 interface GameProps {
 }
@@ -22,13 +21,13 @@ export function Game({ }: GameProps): JSX.Element {
     [null, null, null],
     [null, null, null],
   ]);
-  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, phase, setPhase, nonPlayedStones, playStone } = useStore();
-
+  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, phase, setPhase, nonPlayedStones, playStone, playedStones } = useStore();
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
   const [adjacentFields, setAdjacentFields] = useState(new Set<Coordinate>());
   const [roundClicks, setRoundClicks] = useState(0);
   const [prevCoordinate, setPrevCoordinate] = useState<Coordinate | undefined>();
+  const board = useRef<HTMLDivElement>(null);
 
   const checkWinner = (matrix: Matrix) => {
     const winnerInfo = checkWinning(matrix);
@@ -69,7 +68,7 @@ export function Game({ }: GameProps): JSX.Element {
       gameService.onTurnFinished(socketService.socket, (turn: Turn) => {
         updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
         setActivePlayer(turn.playerId === 0 ? 1 : 0);
-        playStone(turn.playerId);
+        playStone(turn.playerId, turn.newCoordinate, turn.prevCoordinate);
       });
     }
   };
@@ -106,6 +105,10 @@ export function Game({ }: GameProps): JSX.Element {
   }, [matrix]);
 
   useEffect(() => {
+    console.log(playedStones);
+  }, [playedStones]);
+
+  useEffect(() => {
     if (!listenersAttached) {
       handlePlayerLeft();
       handlePlayerJoin();
@@ -116,7 +119,7 @@ export function Game({ }: GameProps): JSX.Element {
   }, []);
 
   const isFieldEnabled = (value: PLAYER | null, coord: Coordinate): boolean => {
-    if(activePlayer === me?.id) {
+    if(activePlayer === me?.id && !winner) {
       if (phase === 1) {
         return value === null;
       } else if (phase === 2) {
@@ -140,15 +143,19 @@ export function Game({ }: GameProps): JSX.Element {
             <>Wait for opponent to join</>}
 
       <div className={styles.game}>
-        <div className={classnames(styles.controls)}>
-          <h3>Me</h3>
+        <div className={classnames(styles.controls, styles.me)}>
+          <h3>Me: {me?.symbol}</h3>
           {me && nonPlayedStones[me?.id].map(()=>(
-              <Stone emoji={me.symbol || '👽'}/>
+              <Stone emoji={me.symbol || '👽'} color={me?.color}/>
           ))}
         </div>
         <div className={styles.board}>
           <Board/>
-          <div className={styles.fields}>
+          <div className={styles.fields} ref={board}>
+            <>
+              <div className={styles.stones}>{playedStones.map(({element, position}) =>
+                  <div className={classnames(styles.stone, styles[`s${position}`])}>{element}</div>)}
+              </div>
             {matrix.map((row, x) => (
                 <div className={styles.row}>
                   {row.map((value, y)=> (
@@ -156,7 +163,7 @@ export function Game({ }: GameProps): JSX.Element {
                           className={classnames(
                               styles.field,
                               coordinateExistsInSet( {x,y}, winningFields) && styles.winningField,
-                              (coordinateExistsInSet( {x,y}, adjacentFields) && value === null) && styles.adjacentField
+                              isFieldEnabled(value, {x,y}) && styles.activeField
                           )}
                           onClick={() =>{
                             if (activePlayer === me?.id && opponent) {
@@ -173,15 +180,16 @@ export function Game({ }: GameProps): JSX.Element {
                   ))}
                 </div>
             ))}
+            </>
           </div>
       </div>
 
-     <div className={styles.controls}>
+     <div className={classnames(styles.controls, styles.opponent)}>
        {opponent &&
            <>
-             <h3>Opponent: {opponent?.id}</h3>
+             <h3>Opponent: {opponent?.symbol}</h3>
              {nonPlayedStones[opponent.id].map(()=>(
-                 <Stone color="#74f9ab" emoji={opponent?.symbol || "🤖"}/>
+                 <Stone color={opponent?.color} emoji={opponent?.symbol || "🤖"}/>
              ))}
            </>}
         </div>

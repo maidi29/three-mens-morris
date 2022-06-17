@@ -16,6 +16,19 @@
   justify-content: flex-start;
   flex: 1;
   padding: 2rem;
+  @media screen and (max-width: 750px) {
+    flex-direction: row;
+    padding: 0;
+  }
+  &.me {
+    order: 1;
+  }
+  &.opponent {
+    order: 3;
+    @media screen and (max-width: 750px) {
+     order: 2;
+    }
+  }
 }
 
 .board {
@@ -24,8 +37,14 @@
   max-width: 800px;
   max-height: 800px;
   position: relative;
+  min-width: 335px;
+  min-height: 335px;
+  order: 2;
+  @media screen and (max-width: 750px) {
+    order: 3;
+  }
 
-  svg {
+   > svg {
     position: absolute;
     padding: 15px;
     * {
@@ -40,6 +59,75 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    .stones {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stone {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      position:absolute;
+      align-items: center;
+      justify-content: center;
+      transition: transform 1s ease-in-out;
+      padding: 15px;
+
+      &.s00 {
+        transform: translate3d(-50%,-50%,0);
+        > * {
+          transform: translate3d(50%,50%,0);
+        }
+      }
+      &.s01 {
+        transform: translate3d(0,-50%,0);
+        > * {
+          transform: translate3d(0,50%,0);
+        }
+      }
+      &.s02 {
+        transform: translate3d(50%,-50%,0);
+        > * {
+          transform: translate3d(-50%,50%,0);
+        }
+      }
+      &.s10 {
+        transform: translate3d(-50%,0,0);
+        > * {
+          transform: translate3d(50%,0,0);
+        }
+      }
+      &.s12 {
+        transform: translate3d(50%,0%,0);
+        > * {
+          transform: translate3d(-50%,0,0);
+        }
+      }
+      &.s20 {
+        transform: translate3d(-50%,50%,0);
+        > * {
+          transform: translate3d(50%,-50%,0);
+        }
+      }
+      &.s21 {
+        transform: translate3d(0,50%,0);
+        > * {
+          transform: translate3d(0,-50%,0);
+        }
+      }
+      &.s22 {
+        transform: translate3d(50%,50%,0);
+        > * {
+          transform: translate3d(-50%,-50%,0);
+        }
+      }
+    }
 
     .row {
       display: flex;
@@ -68,7 +156,7 @@
                   0 0 25px 15px #f0f, // middle magenta
                   0 0 35px 23px #0ff; // outer cyan
         }
-        &.adjacentField {
+        &.adjacentField, &.activeField {
           animation: blinker 1s linear infinite;
         }
       }
@@ -77,9 +165,8 @@
 
 }
 
-
 @keyframes blinker {
   50% {
-    opacity: 0;
+    opacity: .5;
   }
 }
