@@ -22,11 +22,15 @@
   }
   &.me {
     order: 1;
+    @media screen and (max-width: 750px) {
+      min-width: calc(50% - 1rem);
+    }
   }
   &.opponent {
     order: 3;
     @media screen and (max-width: 750px) {
-     order: 2;
+      order: 2;
+      min-width: calc(50% - 1rem);
     }
   }
 }
@@ -60,24 +64,20 @@
     flex-direction: column;
     justify-content: space-between;
 
-    .stones {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
     .stone {
       width: 100%;
       height: 100%;
       display: flex;
-      position:absolute;
+      position: absolute;
       align-items: center;
       justify-content: center;
       transition: transform 1s ease-in-out;
       padding: 15px;
+      pointer-events: none;
+      z-index: 2;
+      > * {
+        transition: transform 1s ease-in-out;
+      }
 
       &.s00 {
         transform: translate3d(-50%,-50%,0);
@@ -158,6 +158,7 @@
         }
         &.adjacentField, &.activeField {
           animation: blinker 1s linear infinite;
+          box-shadow: 0 0 2rem 1rem #fff;
         }
       }
     }

@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 export default (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: ["http://localhost:3000", "http://localhost:3006", "https://morris.herokuapp.com"],
+      origin: ["http://localhost:3000", "http://localhost:3006", "https://three-mens-morris.herokuapp.com"],
     },
     maxHttpBufferSize: 4e6 // 4Mb
   });

@@ -21,7 +21,7 @@ export function Game({ }: GameProps): JSX.Element {
     [null, null, null],
     [null, null, null],
   ]);
-  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, phase, setPhase, nonPlayedStones, playStone, playedStones } = useStore();
+  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, phase, setPhase, nonPlayedStones, playStone, playedStones, resetActiveGameButKeepRoom } = useStore();
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
   const [adjacentFields, setAdjacentFields] = useState(new Set<Coordinate>());
@@ -59,7 +59,7 @@ export function Game({ }: GameProps): JSX.Element {
     if (socketService.socket) {
       setRoundClicks(0);
       setAdjacentFields(new Set());
-      gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId: activePlayer, ...(phase === 2 && {prevCoordinate})})
+      gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId: activePlayer || 0, ...(phase === 2 && {prevCoordinate})})
     }
   };
 
@@ -105,8 +105,13 @@ export function Game({ }: GameProps): JSX.Element {
   }, [matrix]);
 
   useEffect(() => {
-    console.log(playedStones);
-  }, [playedStones]);
+    if (winner) {
+      setActivePlayer(null);
+    } else {
+      // setAdjacentFields(new Set<Coordinate>());
+      // setWinningFields(new Set<Coordinate>());
+    }
+  }, [winner]);
 
   useEffect(() => {
     if (!listenersAttached) {
@@ -119,7 +124,7 @@ export function Game({ }: GameProps): JSX.Element {
   }, []);
 
   const isFieldEnabled = (value: PLAYER | null, coord: Coordinate): boolean => {
-    if(activePlayer === me?.id && !winner) {
+    if(activePlayer === me?.id && winner === null) {
       if (phase === 1) {
         return value === null;
       } else if (phase === 2) {
@@ -138,14 +143,19 @@ export function Game({ }: GameProps): JSX.Element {
   return (
       <>
       <h2>Room ID: {room?.roomId}</h2>
-        {opponent ?
-            (activePlayer === me?.id ? <h2>your turn</h2> : <h2>opponents turn</h2>) :
-            <>Wait for opponent to join</>}
-
+        { opponent ?
+            winner !== null ?
+                <>
+                  { winner === me?.id ? <h2>You win</h2> : <h2>You loose</h2> }
+                  <button onClick={()=>resetActiveGameButKeepRoom()}>Play again</button>
+                </> :
+                (activePlayer === me?.id ? <h2>your turn {winner}</h2> : <h2>opponents turn {winner}</h2>) :
+            <>Wait for opponent to join</>
+        }
       <div className={styles.game}>
         <div className={classnames(styles.controls, styles.me)}>
           <h3>Me: {me?.symbol}</h3>
-          {me && nonPlayedStones[me?.id].map(()=>(
+          { me && nonPlayedStones[me?.id].map(()=>(
               <Stone emoji={me.symbol || '👽'} color={me?.color}/>
           ))}
         </div>
@@ -153,10 +163,9 @@ export function Game({ }: GameProps): JSX.Element {
           <Board/>
           <div className={styles.fields} ref={board}>
             <>
-              <div className={styles.stones}>{playedStones.map(({element, position}) =>
+              {playedStones.map(({element, position}) =>
                   <div className={classnames(styles.stone, styles[`s${position}`])}>{element}</div>)}
-              </div>
-            {matrix.map((row, x) => (
+              {matrix.map((row, x) => (
                 <div className={styles.row}>
                   {row.map((value, y)=> (
                       <button
@@ -176,7 +185,7 @@ export function Game({ }: GameProps): JSX.Element {
                               }
                             }
                           }}
-                          disabled={!isFieldEnabled(value, {x,y})}>{value !== null ? value === me?.id ? me?.symbol : opponent?.symbol : ''}</button>
+                          disabled={!isFieldEnabled(value, {x,y})}/>
                   ))}
                 </div>
             ))}

@@ -31,16 +31,16 @@ interface AppState {
   setGameFinished: (isFinished: boolean) => void;
   resetStore: () => void;
   resetActiveGameButKeepRoom: () => void;
-  activePlayer: PLAYER;
-  setActivePlayer: (playerId: PLAYER) => void;
+  activePlayer: PLAYER | null;
+  setActivePlayer: (playerId: PLAYER | null) => void;
   winner: PLAYER | null;
   setWinner: (winner: PLAYER | null) => void;
   phase?: number;
   setPhase: (phase: number) => void;
   nonPlayedStones: { 0: number[], 1: number[]},
-    playedStones: { element: ReactElement, position:string}[],
-    playStone: (playerId: PLAYER, value: Coordinate, prevValue?: Coordinate) => void;
-    getPlayerById: (id: PLAYER) => Player | undefined;
+  playedStones: { element: ReactElement, position:string}[],
+  playStone: (playerId: PLAYER, value: Coordinate, prevValue?: Coordinate) => void;
+  getPlayerById: (id: PLAYER) => Player | undefined;
 }
 
 
@@ -54,7 +54,7 @@ export const useStore = create<AppState>((set, get) => ({
     gameFinished: false,
     setGameFinished: (isFinished) => set({ gameFinished: isFinished }),
     activePlayer: 0,
-    setActivePlayer: (playerId: PLAYER) => set( {activePlayer: playerId}),
+    setActivePlayer: (playerId: PLAYER | null) => set( {activePlayer: playerId}),
     setOpponent: (player: Player) => set( {opponent: player}),
     setMe: (player: Player) => set( {me: player}),
     winner: null,
@@ -91,7 +91,6 @@ export const useStore = create<AppState>((set, get) => ({
                     return stone;
                 }
             })
-            console.log('set', plStones);
             set(() => ({
                 playedStones: plStones
             }));
@@ -109,10 +108,21 @@ export const useStore = create<AppState>((set, get) => ({
             state.me = undefined;
             state.opponent = undefined;
         }),
-    resetActiveGameButKeepRoom: () =>
+    // Todo: reset everything properly
+    resetActiveGameButKeepRoom: () => {
+        const winner = get().winner;
         set((state) => {
+            state.winner = null;
+            state.activePlayer = winner;
+            state.playedStones = [];
+            state.nonPlayedStones = {
+                [PLAYER.ZERO]: [0,1,2],
+                [PLAYER.ONE]: [0,1,2]
+            }
+            state.phase = 1;
             state.gameFinished = false;
             if( state.me) state.me.score = 0;
             if (state.opponent) state.opponent.score = 0;
-        }),
+        })
+    },
 }));
