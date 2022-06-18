@@ -50,7 +50,7 @@
 
    > svg {
     position: absolute;
-    padding: 15px;
+    margin: 15px;
     * {
       stroke: theme.$colorSecondary;
     }
@@ -72,7 +72,6 @@
       align-items: center;
       justify-content: center;
       transition: transform 1s ease-in-out;
-      padding: 15px;
       pointer-events: none;
       z-index: 2;
       > * {
@@ -134,8 +133,8 @@
       justify-content: space-between;
 
       .field {
-        height: 3rem;
-        width: 3rem;
+        height: 3.5rem;
+        width: 3.5rem;
         border-radius: 50%;
         border: 1px solid #000;
         background: theme.$colorSecondary;

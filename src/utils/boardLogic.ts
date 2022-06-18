@@ -1,4 +1,5 @@
-import {Coordinate, Matrix} from "../components/Game/Game";
+import {Coordinate} from "../components/Game/Game";
+import {Matrix} from "../store/store";
 
 export interface WinnerInfo {
     winner: 0 | 1 | null,

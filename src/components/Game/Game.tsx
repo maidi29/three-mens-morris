@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import gameService, {Turn} from "../../services/gameService";
 import socketService from "../../services/socketService";
-import {PLAYER, useStore} from "../../store/store";
+import {Matrix, PLAYER, useStore} from "../../store/store";
 import styles from './Game.module.scss';
 import {Stone} from "../Stone/Stone";
 import classnames from "classnames";
@@ -9,19 +9,27 @@ import {checkWinning, coordinateExistsInSet, getAdjacentFields} from "../../util
 import {Board} from "../Board/Board";
 import roomService from "../../services/roomService";
 
-interface GameProps {
-}
-
-export type Matrix = Array<Array<0 | 1 | null>>;
 export type Coordinate = {x: number, y: number};
 
-export function Game({ }: GameProps): JSX.Element {
-  const [matrix, setMatrix] = useState<Matrix>([
-    [null, null, null],
-    [null, null, null],
-    [null, null, null],
-  ]);
-  const { setGameFinished, activePlayer, setActivePlayer, room, winner, setWinner, opponent, me, setOpponent, phase, setPhase, nonPlayedStones, playStone, playedStones, resetActiveGameButKeepRoom } = useStore();
+export function Game(): JSX.Element {
+  const {
+    setGameFinished,
+    activePlayer,
+    setActivePlayer,
+    room,
+    winner,
+    setWinner,
+    opponent,
+    me,
+    setOpponent,
+    phase,
+    setPhase,
+    nonPlayedStones,
+    playStone,
+    playedStones,
+    resetActiveGameButKeepRoom,
+    gameFinished,
+    increaseScore, matrix, setMatrix } = useStore();
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
   const [adjacentFields, setAdjacentFields] = useState(new Set<Coordinate>());
@@ -44,16 +52,10 @@ export function Game({ }: GameProps): JSX.Element {
       newMatrix[x][y] = value;
     }
     if (toBeRemoved) {
-      matrix[toBeRemoved.x][toBeRemoved.y] = null;
+      newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
     }
     setMatrix(newMatrix);
   }
-
-  const gameEnd = (isEnd: boolean) => {
-    if (socketService.socket) {
-      gameService.gameEnd(socketService.socket, isEnd);
-    }
-  };
 
   const turnFinished = (coord: Coordinate) => {
     if (socketService.socket) {
@@ -69,14 +71,6 @@ export function Game({ }: GameProps): JSX.Element {
         updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
         setActivePlayer(turn.playerId === 0 ? 1 : 0);
         playStone(turn.playerId, turn.newCoordinate, turn.prevCoordinate);
-      });
-    }
-  };
-
-  const handleGameEnd = () => {
-    if (socketService.socket) {
-      gameService.onGameEnd(socketService.socket, (isEnd) => {
-        setGameFinished(isEnd);
       });
     }
   };
@@ -101,23 +95,30 @@ export function Game({ }: GameProps): JSX.Element {
 
 
   useEffect(() => {
+    console.log('matrix', matrix)
     checkWinner(matrix);
   }, [matrix]);
 
   useEffect(() => {
-    if (winner) {
+    if (winner !== null) {
       setActivePlayer(null);
-    } else {
-      // setAdjacentFields(new Set<Coordinate>());
-      // setWinningFields(new Set<Coordinate>());
+      setGameFinished(true);
+      increaseScore(winner);
     }
   }, [winner]);
+
+  useEffect(() => {
+    console.log('gameFinished', gameFinished);
+    if (!gameFinished) {
+      setWinningFields(new Set<Coordinate>());
+      setAdjacentFields(new Set<Coordinate>());
+    }
+  }, [gameFinished]);
 
   useEffect(() => {
     if (!listenersAttached) {
       handlePlayerLeft();
       handlePlayerJoin();
-      handleGameEnd();
       handleTurnFinished();
       setListenersAttached(true);
     }
@@ -155,6 +156,7 @@ export function Game({ }: GameProps): JSX.Element {
       <div className={styles.game}>
         <div className={classnames(styles.controls, styles.me)}>
           <h3>Me: {me?.symbol}</h3>
+          <h3>Score: {me?.score}</h3>
           { me && nonPlayedStones[me?.id].map(()=>(
               <Stone emoji={me.symbol || '👽'} color={me?.color}/>
           ))}
@@ -197,6 +199,7 @@ export function Game({ }: GameProps): JSX.Element {
        {opponent &&
            <>
              <h3>Opponent: {opponent?.symbol}</h3>
+             <h3>Score: {opponent?.score}</h3>
              {nonPlayedStones[opponent.id].map(()=>(
                  <Stone color={opponent?.color} emoji={opponent?.symbol || "🤖"}/>
              ))}

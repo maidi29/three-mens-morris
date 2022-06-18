@@ -2,6 +2,9 @@ import create from "zustand";
 import {Stone} from "../components/Stone/Stone";
 import {ReactElement} from "react";
 import {Coordinate} from "../components/Game/Game";
+import omit from 'lodash-es/omit'
+
+export type Matrix = Array<Array<0 | 1 | null>>;
 
 export interface Room {
   roomId: string;
@@ -41,8 +44,10 @@ interface AppState {
   playedStones: { element: ReactElement, position:string}[],
   playStone: (playerId: PLAYER, value: Coordinate, prevValue?: Coordinate) => void;
   getPlayerById: (id: PLAYER) => Player | undefined;
+  increaseScore:(id: PLAYER) => void;
+  matrix: Matrix,
+  setMatrix: (matrix: Matrix) => void;
 }
-
 
 export const useStore = create<AppState>((set, get) => ({
     me: undefined,
@@ -61,6 +66,12 @@ export const useStore = create<AppState>((set, get) => ({
     setWinner: (winner: PLAYER | null) => set({winner}),
     phase: undefined,
     setPhase: (phase: number) => set({phase}),
+    matrix: [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+    ],
+    setMatrix: (matrix: Matrix) => set ({matrix: [...matrix]}),
     playedStones: [],
     nonPlayedStones: {
         [PLAYER.ZERO]: [0,1,2],
@@ -101,6 +112,23 @@ export const useStore = create<AppState>((set, get) => ({
         const opponent = get().opponent;
         return [me,opponent].find((player) => player?.id === id);
     },
+    increaseScore: (id: PLAYER) => {
+        console.log('increaseScore', id);
+        if (id === get().me?.id) {
+            set(({ me }) =>
+                me ? ({ me: { ...me, score: me.score + 1  } }) : { me }
+            );
+            console.log('me win', id, get().me?.id, get().me);
+        } else if (id === get().opponent?.id) {
+            set(({ opponent }) =>
+                opponent ? ({ opponent: { ...opponent, score: opponent.score + 1 } }) : { opponent }
+            )
+            console.log('opponent win', id, get().me?.id, get().me);
+
+            console.log(get().opponent);
+
+        }
+    },
     resetStore: () =>
         set((state) => {
             state.room = undefined;
@@ -108,21 +136,22 @@ export const useStore = create<AppState>((set, get) => ({
             state.me = undefined;
             state.opponent = undefined;
         }),
-    // Todo: reset everything properly
     resetActiveGameButKeepRoom: () => {
+        console.log('resetActiveGame');
+        // Todo: how to reset matrix properly???
         const winner = get().winner;
-        set((state) => {
+        const newMarix = get().matrix.map((row)=>[null,null,null]);
+        return set((state) => {
             state.winner = null;
             state.activePlayer = winner;
             state.playedStones = [];
+            state.matrix = [...newMarix]
             state.nonPlayedStones = {
                 [PLAYER.ZERO]: [0,1,2],
                 [PLAYER.ONE]: [0,1,2]
             }
             state.phase = 1;
             state.gameFinished = false;
-            if( state.me) state.me.score = 0;
-            if (state.opponent) state.opponent.score = 0;
         })
     },
 }));

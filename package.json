@@ -14,6 +14,7 @@
     "classnames": "^2.3.1",
     "emoji-picker-react": "^3.5.1",
     "i18next": "^21.6.14",
+    "lodash-es": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "6",
@@ -51,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
     "prettier": "^2.6.2",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
