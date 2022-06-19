@@ -34,7 +34,7 @@ export const checkWinning = (matrix: Matrix): WinnerInfo | undefined => {
     if (matrix[1][1] !== null) {
         if ((new Set([matrix[0][0], matrix[1][1], matrix[2][2]])).size === 1 )  {
             return {
-                winner: matrix[1][0],
+                winner: matrix[1][1],
                 winningFields: new Set([{x:0,y:0}, {x:1,y:1}, {x:2,y:2}])
             }
         } else if ((new Set([matrix[0][2], matrix[1][1], matrix[2][0]])).size === 1) {

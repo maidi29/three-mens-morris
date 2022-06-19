@@ -47,6 +47,7 @@ interface AppState {
   increaseScore:(id: PLAYER) => void;
   matrix: Matrix,
   setMatrix: (matrix: Matrix) => void;
+  updateMatrix: ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -71,7 +72,25 @@ export const useStore = create<AppState>((set, get) => ({
         [null, null, null],
         [null, null, null],
     ],
-    setMatrix: (matrix: Matrix) => set ({matrix: [...matrix]}),
+    setMatrix: (matrix: Matrix) => set ({matrix: matrix.map((arr)=>arr.slice())}),
+    updateMatrix: ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => {
+        console.log('mymatrix inside onclick', get().matrix);
+        const mtrx = get().matrix;
+        const newMatrix = mtrx.map((arr)=>arr.slice());
+        // console.log('newMatrix', newMatrix);
+        // const newTestMatrix = [...matrix];
+        // const newArray = [...array];
+        //
+        if (newMatrix[x][y] === null) {
+            newMatrix[x][y] = value;
+            // newTestMatrix[x][y] = value;
+            // newArray[x] = value;
+        }
+        if (toBeRemoved) {
+            newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
+        }
+        return set ({matrix: [...newMatrix]})
+    },
     playedStones: [],
     nonPlayedStones: {
         [PLAYER.ZERO]: [0,1,2],
@@ -140,12 +159,12 @@ export const useStore = create<AppState>((set, get) => ({
         console.log('resetActiveGame');
         // Todo: how to reset matrix properly???
         const winner = get().winner;
-        const newMarix = get().matrix.map((row)=>[null,null,null]);
+        const newMatrix = get().matrix.map((row)=>[null,null,null]);
         return set((state) => {
             state.winner = null;
             state.activePlayer = winner;
             state.playedStones = [];
-            state.matrix = [...newMarix]
+            state.matrix = JSON.parse(JSON.stringify(newMatrix));
             state.nonPlayedStones = {
                 [PLAYER.ZERO]: [0,1,2],
                 [PLAYER.ONE]: [0,1,2]

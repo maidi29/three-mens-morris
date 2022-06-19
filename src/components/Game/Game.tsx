@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import gameService, {Turn} from "../../services/gameService";
 import socketService from "../../services/socketService";
 import {Matrix, PLAYER, useStore} from "../../store/store";
@@ -10,6 +10,8 @@ import {Board} from "../Board/Board";
 import roomService from "../../services/roomService";
 
 export type Coordinate = {x: number, y: number};
+
+const initState = Array.from({length: 3},()=> Array.from({length: 3}, () => null))
 
 export function Game(): JSX.Element {
   const {
@@ -29,36 +31,48 @@ export function Game(): JSX.Element {
     playedStones,
     resetActiveGameButKeepRoom,
     gameFinished,
-    increaseScore, matrix, setMatrix } = useStore();
+    increaseScore, matrix, updateMatrix } = useStore();
   const [listenersAttached, setListenersAttached] = useState(false);
   const [winningFields, setWinningFields] = useState(new Set<Coordinate>());
   const [adjacentFields, setAdjacentFields] = useState(new Set<Coordinate>());
   const [roundClicks, setRoundClicks] = useState(0);
   const [prevCoordinate, setPrevCoordinate] = useState<Coordinate | undefined>();
+  const [myMatrix, setMyMatrix] = useState<Matrix>([[...initState[0]],[...initState[1]],[...initState[2]]]);
+  const [array, setArray] = useState<Array<0|1|null>>(Array.from({length: 3},() => null));
   const board = useRef<HTMLDivElement>(null);
 
-  const checkWinner = (matrix: Matrix) => {
-    const winnerInfo = checkWinning(matrix);
-    if(winnerInfo) {
+  const checkWinner = (mtrx: Matrix) => {
+    const winnerInfo = checkWinning(mtrx);
+    if (winnerInfo) {
+      console.log('setWinner', winnerInfo);
       setWinner(winnerInfo.winner);
       setWinningFields(winnerInfo.winningFields);
     }
   }
 
-  const updateMatrix = ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => {
-    const newMatrix = [...matrix];
-
-    if (newMatrix[x][y] === null) {
-      newMatrix[x][y] = value;
-    }
-    if (toBeRemoved) {
-      newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
-    }
-    setMatrix(newMatrix);
-  }
+  // const updateMatrix = ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => {
+  //   console.log('mymatrix inside onclick', myMatrix);
+  //   const newMatrix = [[...myMatrix[0]],[...myMatrix[1]], [...myMatrix[2]]];
+  //   // console.log('newMatrix', newMatrix);
+  //   // const newTestMatrix = [...matrix];
+  //   // const newArray = [...array];
+  //   //
+  //   if (newMatrix[x][y] === null) {
+  //     newMatrix[x][y] = value;
+  //     // newTestMatrix[x][y] = value;
+  //     // newArray[x] = value;
+  //   }
+  //   if (toBeRemoved) {
+  //     newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
+  //   }
+  //   setMyMatrix(newMatrix);
+  //   // setArray(newArray);
+  //   // setMatrix(newTestMatrix);
+  // };
 
   const turnFinished = (coord: Coordinate) => {
     if (socketService.socket) {
+      updateMatrix(coord, me!.id);
       setRoundClicks(0);
       setAdjacentFields(new Set());
       gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId: activePlayer || 0, ...(phase === 2 && {prevCoordinate})})
@@ -94,21 +108,30 @@ export function Game(): JSX.Element {
   };
 
 
+  // useEffect(() => {
+  //   console.log('my matrix', myMatrix);
+  //   checkWinner(myMatrix);
+  // }, [myMatrix]);
+
   useEffect(() => {
-    console.log('matrix', matrix)
+    console.log('matrix', matrix);
     checkWinner(matrix);
   }, [matrix]);
+
+  useEffect(() => {
+  }, [array]);
 
   useEffect(() => {
     if (winner !== null) {
       setActivePlayer(null);
       setGameFinished(true);
       increaseScore(winner);
+      // setMyMatrix([[...initState[0]],[...initState[1]],[...initState[2]]]);
+      setArray( Array.from({length: 3}, () => null));
     }
   }, [winner]);
 
   useEffect(() => {
-    console.log('gameFinished', gameFinished);
     if (!gameFinished) {
       setWinningFields(new Set<Coordinate>());
       setAdjacentFields(new Set<Coordinate>());
