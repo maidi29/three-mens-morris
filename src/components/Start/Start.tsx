@@ -77,7 +77,7 @@ export function Start({ }): JSX.Element {
   return (
       <div className={styles.centerColumn}>
         <div className={styles.centerColumn}>
-            <Stone emoji={chosenEmoji} color={color}/>
+            <Stone emoji={chosenEmoji} color={color} size={7}/>
             <div>
                 <input type="color" onChange={e => setColor(e.target.value)} value={color}/>
                 <button onClick={()=>openPicker()}>Change icon</button>

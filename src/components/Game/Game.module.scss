@@ -3,9 +3,9 @@
 @function getTransValue($pos) {
   @if ($pos == 0) {
     @return 0;
-  } @elseif ($pos == 1) {
+  } @else if ($pos == 1) {
     @return 50%;
-  } @elseif ($pos == 2) {
+  } @else if ($pos == 2) {
     @return 100%;
   }
 }
@@ -25,6 +25,16 @@
   }
 }
 
+.winningText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  > h2 {
+    position: absolute;
+  }
+
+}
 .game {
   display: flex;
   justify-content: space-evenly;
@@ -51,24 +61,17 @@
   }
   &.me {
     order: 1;
-    @media screen and (max-width: 750px) {
-      //min-width: calc(50% - 1rem);
-    }
   }
   &.opponent {
     order: 3;
-    @media screen and (max-width: 750px) {
-      order: 2;
-      // min-width: calc(50% - 1rem);
-    }
   }
 }
 
 .board {
   width: 50vw;
   height: 50vw;
-  max-width: 800px;
-  max-height: 800px;
+  max-width: 650px;
+  max-height: 650px;
   position: relative;
   min-width: 335px;
   min-height: 335px;
@@ -79,9 +82,10 @@
 
    > svg {
     position: absolute;
-    margin: 2.5rem;
+    margin: 2rem;
     * {
       stroke: theme.$colorSecondary;
+      stroke-width: .5rem;
     }
   }
 
@@ -114,15 +118,15 @@
       justify-content: space-between;
 
       .field {
-        height: 5rem;
-        width: 5rem;
+        height: 4rem;
+        width: 4rem;
         border-radius: 50%;
         border: 1px solid #000;
         background: theme.$colorSecondary;
-        font-size: 2rem;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
         &:not([disabled]) {
           cursor: pointer;
         }
@@ -131,14 +135,10 @@
           color: #000;
         }
         &.winningField {
-          box-shadow:
-                  0 0 15px 7px #fff, // inner white
-                  0 0 25px 15px #f0f, // middle magenta
-                  0 0 35px 23px #0ff; // outer cyan
+          box-shadow: 0 0 .5rem .5rem theme.$colorTertiary;
         }
-        &.adjacentField, &.activeField {
+        &.activeField {
           animation: blinker 1s linear infinite;
-          box-shadow: 0 0 2rem 1rem #fff;
         }
       }
     }
@@ -147,8 +147,16 @@
 }
 
 @keyframes blinker {
-  50% {
-    opacity: .5;
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 1.5rem rgba(255, 255, 255, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
   }
 }
 

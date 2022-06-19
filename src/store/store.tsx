@@ -127,7 +127,7 @@ export const useStore = create<AppState>((set, get) => ({
             if (player) {
                 set(({playedStones}) => ({
                     playedStones: [...playedStones, {
-                        element: <Stone emoji={player.symbol} color={player.color}/>,
+                        element: <Stone emoji={player.symbol} color={player.color} size={4}/>,
                         position: `${x}${y}`
                     }]
                 }));

@@ -5,18 +5,14 @@
   position: relative;
   justify-content: center;
   align-items: center;
-  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-  border-radius: 50%;
   width: min-content;
   .emoji {
+    line-height: 1;
     position: absolute;
-    font-size: 2.5rem;
   }
 }
 .octagon {
   * {
     fill: theme.$colorSecondary;
   }
-  width: 5rem;
-  height: 5rem;
 }

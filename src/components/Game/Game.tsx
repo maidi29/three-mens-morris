@@ -8,6 +8,8 @@ import classnames from "classnames";
 import {coordinateExistsInSet, getAdjacentFields} from "../../utils/boardLogic";
 import {Board} from "../Board/Board";
 import roomService from "../../services/roomService";
+import Lottie from 'react-lottie';
+import confetti from '../../lotties/confetti.json';
 
 export type Coordinate = {x: number, y: number};
 
@@ -119,7 +121,20 @@ export function Game(): JSX.Element {
             <h2 className={styles.pulse}>Wait for opponent to join</h2> :
             winner !== null ?
             <>
-              { winner === me?.id ? <h2 className={styles.pulse}>You win</h2> : <h2>You loose</h2> }
+              { winner === me?.id ?
+                  <div className={styles.winningText}>
+                    <Lottie
+                        options={{
+                          loop: false,
+                          autoplay: true,
+                          animationData: confetti,
+                          rendererSettings: {
+                          preserveAspectRatio: "xMidYMid slice",
+                        }}}
+                        width={200}
+                    />
+                  <h2 className={styles.pulse}>You win</h2>
+              </div> : <h2>You lose</h2> }
                 <button className="button" onClick={reactivate}>
                   Play again
                 </button>
@@ -131,7 +146,7 @@ export function Game(): JSX.Element {
           <h3 className={styles.test}>Me: {me?.symbol}</h3>
           <h3>Score: {me?.score}</h3>
           { me && nonPlayedStones[me?.id].map(()=>(
-              <Stone emoji={me.symbol || '👽'} color={me?.color}/>
+              <Stone emoji={me.symbol || '👽'} color={me?.color} size={4}/>
           ))}
         </div>
         <div className={styles.board}>
@@ -173,7 +188,7 @@ export function Game(): JSX.Element {
              <h3>Opponent: {opponent?.symbol}</h3>
              <h3>Score: {opponent?.score}</h3>
              {nonPlayedStones[opponent.id].map(()=>(
-                 <Stone color={opponent?.color} emoji={opponent?.symbol || "🤖"}/>
+                 <Stone color={opponent?.color} emoji={opponent?.symbol || "🤖"} size={4}/>
              ))}
            </>}
         </div>
