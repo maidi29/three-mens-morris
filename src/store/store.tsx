@@ -1,12 +1,16 @@
 import create from "zustand";
 import {Stone} from "../components/Stone/Stone";
-import {ReactElement, useState} from "react";
+import {ReactElement} from "react";
 import {Coordinate} from "../components/Game/Game";
 import {checkWinning} from "../utils/boardLogic";
 import produce from 'immer'
 
+export enum PLAYER {
+    ZERO = 0,
+    ONE = 1
+}
 
-export type Matrix = Array<Array<0 | 1 | null>>;
+export type Matrix = Array<Array<PLAYER | null>>;
 
 export interface Room {
   roomId: string;
@@ -21,14 +25,9 @@ export interface Player {
   activated: boolean;
 }
 
-export enum PLAYER {
-    ZERO = 0,
-    ONE = 1
-}
-
 export enum PHASE {
-    SET = 1,
-    MOVE = 2
+    SET = 'set',
+    MOVE = 'move'
 }
 
 interface AppState {
@@ -75,7 +74,7 @@ export const useStore = create<AppState>((set, get) => ({
     },
     gameFinished: false,
     setGameFinished: (isFinished) => set({ gameFinished: isFinished }),
-    activePlayer: 0,
+    activePlayer: PLAYER.ZERO,
     setActivePlayer: (playerId: PLAYER | null) => set( {activePlayer: playerId}),
     setOpponent: (player?: Player) => set( {opponent: player}),
     setMe: (player: Player) => set( {me: player}),
@@ -96,7 +95,6 @@ export const useStore = create<AppState>((set, get) => ({
     },
     matrix: [...initMatrix],
     updateMatrix: ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => {
-        console.log('updatematrix tobe removed', toBeRemoved)
         const matrix = get().matrix;
         const newMatrix = matrix.map((arr)=>arr.slice());
         if (newMatrix[x][y] === null) {
@@ -105,7 +103,6 @@ export const useStore = create<AppState>((set, get) => ({
         if (toBeRemoved) {
             newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
         }
-        console.log('newMatrix', newMatrix);
         set ({matrix: [...newMatrix]});
         set ({adjacentFields: new Set<Coordinate>()});
         const winnerInfo = checkWinning(newMatrix);
@@ -120,25 +117,26 @@ export const useStore = create<AppState>((set, get) => ({
         [PLAYER.ONE]: [0,1,2]
     },
     playStone: (playerId: PLAYER, {x,y}: Coordinate, prevValue?: Coordinate) => {
+        console.log(x+''+y);
         const phase = get().phase;
         if (phase === PHASE.SET) {
-            set(({ nonPlayedStones }) =>
-                    ({ nonPlayedStones: { ...nonPlayedStones, [playerId]: nonPlayedStones[playerId].slice(0,-1) } })
+            set(({nonPlayedStones}) =>
+                ({nonPlayedStones: {...nonPlayedStones, [playerId]: nonPlayedStones[playerId].slice(0, -1)}})
             );
-
             const player = get().getPlayerById(playerId);
             if (player) {
                 set(({playedStones}) => ({
-                    playedStones: [...playedStones, {element: <Stone emoji={player.symbol} color={player.color}/>, position: `${x}${y}`}]
+                    playedStones: [...playedStones, {
+                        element: <Stone emoji={player.symbol} color={player.color}/>,
+                        position: `${x}${y}`
+                    }]
                 }));
             }
-
             const nPlStones = get().nonPlayedStones;
             const noMoreStones = Object.values(nPlStones).every((value) => value.length === 0);
             if (noMoreStones) {
-                set( {phase: PHASE.MOVE});
+                set({phase: PHASE.MOVE});
             }
-
         } else if (phase === PHASE.MOVE && prevValue) {
             const plStones = get().playedStones.map((stone)=> (
                 stone.position === `${prevValue.x}${prevValue.y}` ? {

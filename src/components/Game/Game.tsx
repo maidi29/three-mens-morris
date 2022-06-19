@@ -128,7 +128,7 @@ export function Game(): JSX.Element {
         }
       <div className={styles.game}>
         <div className={classnames(styles.controls, styles.me)}>
-          <h3>Me: {me?.symbol}</h3>
+          <h3 className={styles.test}>Me: {me?.symbol}</h3>
           <h3>Score: {me?.score}</h3>
           { me && nonPlayedStones[me?.id].map(()=>(
               <Stone emoji={me.symbol || '👽'} color={me?.color}/>

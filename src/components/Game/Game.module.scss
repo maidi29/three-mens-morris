@@ -1,5 +1,30 @@
 @use '../../theme';
 
+@function getTransValue($pos) {
+  @if ($pos == 0) {
+    @return 0;
+  } @elseif ($pos == 1) {
+    @return 50%;
+  } @elseif ($pos == 2) {
+    @return 100%;
+  }
+}
+
+@mixin sxy {
+  @for $x from 0 through 2 {
+    @for $y from 0 through 2 {
+      $transX: getTransValue($y);
+      $transY: getTransValue($x);
+      .s#{$x}#{$y} {
+        transform: translate3d($transX,$transY,0);
+        > * {
+          transform: translate3d(-$transX,-$transY,0);
+        }
+      }
+    }
+  }
+}
+
 .game {
   display: flex;
   justify-content: space-evenly;
@@ -63,68 +88,20 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    @include sxy;
 
     .stone {
       width: 100%;
       height: 100%;
       display: flex;
       position: absolute;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-start;
+      justify-content: flex-start;
       transition: transform 1s ease-in-out;
       pointer-events: none;
       z-index: 2;
       > * {
         transition: transform 1s ease-in-out;
-      }
-
-      &.s00 {
-        transform: translate3d(-50%,-50%,0);
-        > * {
-          transform: translate3d(50%,50%,0);
-        }
-      }
-      &.s01 {
-        transform: translate3d(0,-50%,0);
-        > * {
-          transform: translate3d(0,50%,0);
-        }
-      }
-      &.s02 {
-        transform: translate3d(50%,-50%,0);
-        > * {
-          transform: translate3d(-50%,50%,0);
-        }
-      }
-      &.s10 {
-        transform: translate3d(-50%,0,0);
-        > * {
-          transform: translate3d(50%,0,0);
-        }
-      }
-      &.s12 {
-        transform: translate3d(50%,0%,0);
-        > * {
-          transform: translate3d(-50%,0,0);
-        }
-      }
-      &.s20 {
-        transform: translate3d(-50%,50%,0);
-        > * {
-          transform: translate3d(50%,-50%,0);
-        }
-      }
-      &.s21 {
-        transform: translate3d(0,50%,0);
-        > * {
-          transform: translate3d(0,-50%,0);
-        }
-      }
-      &.s22 {
-        transform: translate3d(50%,50%,0);
-        > * {
-          transform: translate3d(-50%,-50%,0);
-        }
       }
     }
 
