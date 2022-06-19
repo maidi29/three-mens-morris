@@ -1,4 +1,3 @@
-import { useSocketServer } from "socket-controllers";
 import { Server } from "socket.io";
 
 
@@ -70,8 +69,6 @@ export default (httpServer) => {
       socket.broadcast.in(room).emit('on_reactivate');
     });
   });
-
-  //useSocketServer(io, { controllers: [__dirname + "/api/controllers/*.ts"] });
 
   return io;
 };

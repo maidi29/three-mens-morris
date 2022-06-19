@@ -20,7 +20,6 @@
     "pm2": "^5.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "socket-controllers": "^0.0.5",
     "socket.io": "^4.4.1",
     "ts-node": "^10.7.0"
   },
