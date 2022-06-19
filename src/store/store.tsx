@@ -1,8 +1,10 @@
 import create from "zustand";
 import {Stone} from "../components/Stone/Stone";
-import {ReactElement} from "react";
+import {ReactElement, useState} from "react";
 import {Coordinate} from "../components/Game/Game";
-import omit from 'lodash-es/omit'
+import {checkWinning} from "../utils/boardLogic";
+import produce from 'immer'
+
 
 export type Matrix = Array<Array<0 | 1 | null>>;
 
@@ -23,6 +25,11 @@ export enum PLAYER {
     ONE = 1
 }
 
+export enum PHASE {
+    SET = 1,
+    MOVE = 2
+}
+
 interface AppState {
   me?: Player;
   opponent?: Player;
@@ -37,18 +44,27 @@ interface AppState {
   activePlayer: PLAYER | null;
   setActivePlayer: (playerId: PLAYER | null) => void;
   winner: PLAYER | null;
-  setWinner: (winner: PLAYER | null) => void;
-  phase?: number;
-  setPhase: (phase: number) => void;
+  winningFields: Set<Coordinate>;
+  adjacentFields: Set<Coordinate>;
+  phase?: PHASE;
+  setPhase: (phase: PHASE) => void;
   nonPlayedStones: { 0: number[], 1: number[]},
   playedStones: { element: ReactElement, position:string}[],
   playStone: (playerId: PLAYER, value: Coordinate, prevValue?: Coordinate) => void;
   getPlayerById: (id: PLAYER) => Player | undefined;
   increaseScore:(id: PLAYER) => void;
   matrix: Matrix,
-  setMatrix: (matrix: Matrix) => void;
   updateMatrix: ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => void;
+  setAdjacentFields: (adjacentFields: Set<Coordinate>) => void;
+  setWinningFields: (winningFields: Set<Coordinate>) => void;
 }
+
+const initMatrix = [
+    [null, null, null],
+    [null, null, null],
+    [null, null, null],
+]
+
 
 export const useStore = create<AppState>((set, get) => ({
     me: undefined,
@@ -64,32 +80,29 @@ export const useStore = create<AppState>((set, get) => ({
     setOpponent: (player: Player) => set( {opponent: player}),
     setMe: (player: Player) => set( {me: player}),
     winner: null,
-    setWinner: (winner: PLAYER | null) => set({winner}),
+    winningFields: new Set<Coordinate>(),
+    adjacentFields: new Set<Coordinate>(),
+    setAdjacentFields: (adjacentFields: Set<Coordinate>) => set({adjacentFields}),
+    setWinningFields: (winningFields: Set<Coordinate>) => set({winningFields}),
     phase: undefined,
     setPhase: (phase: number) => set({phase}),
-    matrix: [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
-    ],
-    setMatrix: (matrix: Matrix) => set ({matrix: matrix.map((arr)=>arr.slice())}),
+    matrix: initMatrix,
     updateMatrix: ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => {
-        console.log('mymatrix inside onclick', get().matrix);
-        const mtrx = get().matrix;
-        const newMatrix = mtrx.map((arr)=>arr.slice());
-        // console.log('newMatrix', newMatrix);
-        // const newTestMatrix = [...matrix];
-        // const newArray = [...array];
-        //
+        const matrix = get().matrix;
+        const newMatrix = matrix.map((arr)=>arr.slice());
         if (newMatrix[x][y] === null) {
             newMatrix[x][y] = value;
-            // newTestMatrix[x][y] = value;
-            // newArray[x] = value;
         }
         if (toBeRemoved) {
             newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
         }
-        return set ({matrix: [...newMatrix]})
+        set ({matrix: [...newMatrix]});
+        set ({adjacentFields: new Set<Coordinate>()});
+        const winnerInfo = checkWinning(newMatrix);
+        if (winnerInfo) {
+            set ({winner: winnerInfo.winner});
+            set ({winningFields: winnerInfo.winningFields});
+        }
     },
     playedStones: [],
     nonPlayedStones: {
@@ -104,26 +117,24 @@ export const useStore = create<AppState>((set, get) => ({
             );
             const nPlStones = get().nonPlayedStones;
             const noMoreStones = Object.values(nPlStones).every((value) => value.length === 0);
-            const player = get().getPlayerById(playerId);
-            if (player) {
-                set(({playedStones}) => ({
-                    playedStones: [...playedStones, {element:<Stone emoji={player.symbol} color={player.color}/>, position: `${x}${y}`}]
-                }));
-            }
-            if(noMoreStones) {
+            if (noMoreStones) {
                 set( {phase: 2});
+            } else {
+                const player = get().getPlayerById(playerId);
+                if (player) {
+                    set(({playedStones}) => ({
+                        playedStones: [...playedStones, {element: <Stone emoji={player.symbol} color={player.color}/>, position: `${x}${y}`}]
+                    }));
+                }
             }
         } else if (phase === 2 && prevValue) {
-            const plStones = get().playedStones.map((stone)=> {
-                if (stone.position === `${prevValue.x}${prevValue.y}`) {
-                    return { element: stone.element, position: `${x}${y}`};
-                } else {
-                    return stone;
-                }
-            })
-            set(() => ({
-                playedStones: plStones
-            }));
+            const plStones = get().playedStones.map((stone)=> (
+                stone.position === `${prevValue.x}${prevValue.y}` ? {
+                    element: stone.element,
+                    position: `${x}${y}`
+                } : stone
+            ));
+            set(() => ({ playedStones: plStones }));
         }
     },
     getPlayerById: (id: PLAYER): Player | undefined => {
@@ -132,20 +143,10 @@ export const useStore = create<AppState>((set, get) => ({
         return [me,opponent].find((player) => player?.id === id);
     },
     increaseScore: (id: PLAYER) => {
-        console.log('increaseScore', id);
         if (id === get().me?.id) {
-            set(({ me }) =>
-                me ? ({ me: { ...me, score: me.score + 1  } }) : { me }
-            );
-            console.log('me win', id, get().me?.id, get().me);
+            set(produce((state) => { state.me.score = (get().me?.score || 0) + 1 }));
         } else if (id === get().opponent?.id) {
-            set(({ opponent }) =>
-                opponent ? ({ opponent: { ...opponent, score: opponent.score + 1 } }) : { opponent }
-            )
-            console.log('opponent win', id, get().me?.id, get().me);
-
-            console.log(get().opponent);
-
+            set(produce((state) => { state.opponent.score = (get().opponent?.score || 0) + 1 }));
         }
     },
     resetStore: () =>
@@ -154,17 +155,24 @@ export const useStore = create<AppState>((set, get) => ({
             state.gameFinished = false;
             state.me = undefined;
             state.opponent = undefined;
+            state.winner = null;
+            state.activePlayer = null;
+            state.playedStones = [];
+            state.matrix = initMatrix;
+            state.nonPlayedStones = {
+                [PLAYER.ZERO]: [0,1,2],
+                [PLAYER.ONE]: [0,1,2]
+            }
+            state.phase = 1;
+            state.gameFinished = false;
         }),
     resetActiveGameButKeepRoom: () => {
-        console.log('resetActiveGame');
-        // Todo: how to reset matrix properly???
         const winner = get().winner;
-        const newMatrix = get().matrix.map((row)=>[null,null,null]);
         return set((state) => {
             state.winner = null;
             state.activePlayer = winner;
             state.playedStones = [];
-            state.matrix = JSON.parse(JSON.stringify(newMatrix));
+            state.matrix = initMatrix;
             state.nonPlayedStones = {
                 [PLAYER.ZERO]: [0,1,2],
                 [PLAYER.ONE]: [0,1,2]
