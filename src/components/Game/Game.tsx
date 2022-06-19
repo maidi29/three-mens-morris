@@ -116,15 +116,15 @@ export function Game(): JSX.Element {
       <>
       <h2>Room ID: {room?.roomId}</h2>
         { !opponent || (!gameFinished && !opponent.activated) ?
-            <>Wait for opponent to join</> :
+            <h2 className={styles.pulse}>Wait for opponent to join</h2> :
             winner !== null ?
             <>
-              { winner === me?.id ? <h2>You win</h2> : <h2>You loose</h2> }
-                <button onClick={reactivate}>
+              { winner === me?.id ? <h2 className={styles.pulse}>You win</h2> : <h2>You loose</h2> }
+                <button className="button" onClick={reactivate}>
                   Play again
                 </button>
             </> :
-            (activePlayer === me?.id ? <h2>your turn {winner}</h2> : <h2>opponents turn {winner}</h2>)
+            (activePlayer === me?.id ? <h2 className={styles.pulse}>your turn {winner}</h2> : <h2>opponents turn {winner}</h2>)
         }
       <div className={styles.game}>
         <div className={classnames(styles.controls, styles.me)}>

@@ -33,6 +33,10 @@
   width: 100%;
 }
 
+.pulse {
+  animation: pulse 1s normal forwards ease-in-out;
+}
+
 .controls {
   display: flex;
   gap: 1rem;
@@ -145,5 +149,19 @@
 @keyframes blinker {
   50% {
     opacity: .5;
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    transform: scale3d(1.05, 1.05, 1.05);
+  }
+
+  to {
+    transform: scale3d(1, 1, 1);
   }
 }
