@@ -75,7 +75,7 @@
 
    > svg {
     position: absolute;
-    margin: 15px;
+    margin: 2.5rem;
     * {
       stroke: theme.$colorSecondary;
     }
@@ -110,8 +110,8 @@
       justify-content: space-between;
 
       .field {
-        height: 3.5rem;
-        width: 3.5rem;
+        height: 5rem;
+        width: 5rem;
         border-radius: 50%;
         border: 1px solid #000;
         background: theme.$colorSecondary;
