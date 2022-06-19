@@ -13,30 +13,15 @@ export type Coordinate = {x: number, y: number};
 
 export function Game(): JSX.Element {
   const {
-    setGameFinished,
-    activePlayer,
-    setActivePlayer,
-    room,
-    winner,
-    opponent,
-    me,
-    setOpponent,
-    phase,
-    setPhase,
-    nonPlayedStones,
-    playStone,
-    playedStones,
-    resetActiveGameButKeepRoom,
-    gameFinished,
-    increaseScore,
-    matrix,
-    updateMatrix, winningFields, adjacentFields, setAdjacentFields, setWinningFields } = useStore();
+    setGameFinished, activePlayer, setActivePlayer, room, winner, opponent, me, setOpponent, phase, setPhase, nonPlayedStones,
+    playStone, playedStones, resetActiveGameButKeepRoom, gameFinished, increaseScore, matrix, updateMatrix, winningFields,
+    adjacentFields, setAdjacentFields, setWinningFields, setActivated
+  } = useStore();
   const [listenersAttached, setListenersAttached] = useState(false);
   const [prevCoordinate, setPrevCoordinate] = useState<Coordinate | undefined>();
 
   const turnFinished = (coord: Coordinate) => {
     if (socketService.socket) {
-      updateMatrix(coord, me!.id);
       setPrevCoordinate(undefined);
       gameService.turnFinished(socketService.socket, {newCoordinate: coord, playerId: activePlayer || 0, ...(phase === PHASE.MOVE && {prevCoordinate})})
     }
@@ -46,26 +31,41 @@ export function Game(): JSX.Element {
     if (socketService.socket) {
       gameService.onTurnFinished(socketService.socket, (turn: Turn) => {
         updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
-        setActivePlayer(turn.playerId === 0 ? 1 : 0);
+        setActivePlayer(turn.playerId === PLAYER.ZERO ? PLAYER.ONE : PLAYER.ZERO);
         playStone(turn.playerId, turn.newCoordinate, turn.prevCoordinate);
       });
     }
   };
 
-  const handlePlayerLeft = () => {
+  const reactivate = () => {
+    setActivated(true, false, true);
+    resetActiveGameButKeepRoom();
     if (socketService.socket) {
-      //gameService.onPlayerLeft(socketService.socket, (playerName) =>
-        //removePlayer(playerName)
-      //);
+      gameService.reactivate(socketService.socket);
     }
   };
 
-  const handlePlayerJoin = () => {
+  const handleReactivate = () => {
     if (socketService.socket) {
-      roomService.onPlayerJoined(socketService.socket, (player) => {
-        player.score = 0;
+      gameService.onReactivate(socketService.socket, () => {
+        console.log('opponent reactivate');
+        setActivated(false, true, true);
+      });
+    }
+  };
+
+  const handleOpponentLeft = () => {
+    if (socketService.socket) {
+      roomService.onOpponentLeft(socketService.socket, () =>
+        setOpponent(undefined)
+      );
+    }
+  };
+
+  const handleOpponentJoin = () => {
+    if (socketService.socket) {
+      roomService.onOpponentJoined(socketService.socket, (player) => {
         setOpponent(player);
-        setPhase(PHASE.SET);
       });
     }
   };
@@ -74,6 +74,7 @@ export function Game(): JSX.Element {
     if (winner !== null) {
       setActivePlayer(null);
       setGameFinished(true);
+      setActivated(true,true,false);
       increaseScore(winner);
     }
   }, [winner]);
@@ -86,15 +87,16 @@ export function Game(): JSX.Element {
 
   useEffect(() => {
     if (!listenersAttached) {
-      handlePlayerLeft();
-      handlePlayerJoin();
+      handleOpponentJoin();
+      handleOpponentLeft();
       handleTurnFinished();
+      handleReactivate();
       setListenersAttached(true);
     }
   }, []);
 
   const isFieldEnabled = (value: PLAYER | null, coord: Coordinate): boolean => {
-    if (activePlayer === me?.id && winner === null) {
+    if (activePlayer === me?.id && winner === null && opponent?.activated) {
       if (phase === PHASE.SET) {
         return value === null;
       } else if (phase === PHASE.MOVE) {
@@ -113,14 +115,16 @@ export function Game(): JSX.Element {
   return (
       <>
       <h2>Room ID: {room?.roomId}</h2>
-        { opponent ?
+        { !opponent || (!gameFinished && !opponent.activated) ?
+            <>Wait for opponent to join</> :
             winner !== null ?
-                <>
-                  { winner === me?.id ? <h2>You win</h2> : <h2>You loose</h2> }
-                  <button onClick={()=>resetActiveGameButKeepRoom()}>Play again</button>
-                </> :
-                (activePlayer === me?.id ? <h2>your turn {winner}</h2> : <h2>opponents turn {winner}</h2>) :
-            <>Wait for opponent to join</>
+            <>
+              { winner === me?.id ? <h2>You win</h2> : <h2>You loose</h2> }
+                <button onClick={reactivate}>
+                  Play again
+                </button>
+            </> :
+            (activePlayer === me?.id ? <h2>your turn {winner}</h2> : <h2>opponents turn {winner}</h2>)
         }
       <div className={styles.game}>
         <div className={classnames(styles.controls, styles.me)}>

@@ -34,13 +34,12 @@ export class GameController {
     io.in(gameRoom).emit("on_turn_finished", turn);
   }
 
-  @OnMessage("game_end")
-  public async gameWin(
+  @OnMessage("reactivate")
+  public async reactivate(
     @SocketIO() io: Server,
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() isEnd: boolean
+    @ConnectedSocket() socket: Socket
   ) {
     const gameRoom = this.getSocketGameRoomId(socket);
-    io.in(gameRoom).emit("on_game_end", isEnd);
+    socket.broadcast.to(gameRoom).emit("on_reactivate");
   }
 }

@@ -32,20 +32,20 @@ class RoomService {
         });
     }
 
-    public async onPlayerJoined(
+    public async onOpponentJoined(
         socket: Socket,
         listener: (player: Player) => void
     ) {
-        socket.on("player_joined", (player) => {
+        socket.on("opponent_joined", (player) => {
             listener(player);
         });
     }
 
-    public async onPlayerLeft(
+    public async onOpponentLeft(
         socket: Socket,
         listener: (playerName: string) => void
     ) {
-        socket.on("player_left", (playerName) => listener(playerName));
+        socket.on("opponent_left", (playerName) => listener(playerName));
     }
 }
 

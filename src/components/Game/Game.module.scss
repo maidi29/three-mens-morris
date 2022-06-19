@@ -23,14 +23,14 @@
   &.me {
     order: 1;
     @media screen and (max-width: 750px) {
-      min-width: calc(50% - 1rem);
+      //min-width: calc(50% - 1rem);
     }
   }
   &.opponent {
     order: 3;
     @media screen and (max-width: 750px) {
       order: 2;
-      min-width: calc(50% - 1rem);
+      // min-width: calc(50% - 1rem);
     }
   }
 }

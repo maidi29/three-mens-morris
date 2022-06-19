@@ -10,13 +10,12 @@ export interface Turn {
 
 class GameService {
 
-
-  public async gameEnd(socket: Socket, isEnd: boolean) {
-    socket.emit("game_end", isEnd);
+  public async reactivate(socket: Socket) {
+    socket.emit("reactivate");
   }
 
-  public async onGameEnd(socket: Socket, listener: (isEnd: boolean) => void) {
-    socket.on("on_game_end", (isEnd) => listener(isEnd));
+  public async onReactivate(socket: Socket, listener: () => void) {
+    socket.on("on_reactivate", () => listener());
   }
 
   public async turnFinished(socket: Socket, turn: Turn) {

@@ -43,7 +43,7 @@ export class RoomController {
         socket.emit("room_joined", {
           opponent: otherPlayer,
         });
-        socket.broadcast.to(message.roomId).emit("player_joined", message.player);
+        socket.broadcast.to(message.roomId).emit("opponent_joined", message.player);
       }
     }
   }

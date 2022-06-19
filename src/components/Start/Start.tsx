@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useState} from "react";
 import styles from './Start.module.scss';
 import socketService from "../../services/socketService";
 import roomService from "../../services/roomService";
 import Picker, {IEmojiData} from 'emoji-picker-react';
 import {Stone} from "../Stone/Stone";
 import {getRandomColor, getRandomEmoji} from "../../utils/helper";
-import {Player, useStore} from "../../store/store";
+import {PHASE, PLAYER, Player, useStore} from "../../store/store";
 
 export function Start({ }): JSX.Element {
   const setRoom = useStore((state) => state.setRoom);
@@ -33,11 +33,11 @@ export function Start({ }): JSX.Element {
     setRoomName(value);
   };
 
-  const start = async (playerId: 0 | 1) => {
+  const start = async (playerId: PLAYER) => {
     const socket = socketService.socket;
     if(!socket) return;
 
-    if (playerId === 1 && !roomName) return;
+    if (playerId ===  PLAYER.ONE && !roomName) return;
     let roomInfo;
     let roomId;
 
@@ -45,20 +45,21 @@ export function Start({ }): JSX.Element {
       symbol: chosenEmoji,
       id: playerId,
       color,
-      score: 0
+      score: 0,
+      activated: true,
     };
 
     setIsCreating(true);
-    if (playerId === 1) {
+    if (playerId === PLAYER.ONE) {
       roomInfo = await roomService
           .joinGameRoom(socket, { player: ownPlayer, roomId: roomName })
           .catch((err) => {
-              console.log(err)
+              console.log(err);
           });
       if (roomInfo) {
         setRoom({ roomId: roomName });
         setOpponent(roomInfo.opponent);
-        setPhase(1);
+        setPhase(PHASE.SET);
       }
     } else {
       roomId = await roomService
