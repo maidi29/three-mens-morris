@@ -9,7 +9,7 @@ import {coordinateExistsInSet, getAdjacentFields} from "../../utils/boardLogic";
 import {Board} from "../Board/Board";
 import roomService from "../../services/roomService";
 import Lottie from 'react-lottie';
-import confetti from '../../lotties/confetti.json';
+import pop from '../../lotties/pop.json';
 
 export type Coordinate = {x: number, y: number};
 
@@ -117,38 +117,37 @@ export function Game(): JSX.Element {
   return (
       <>
       <h2>Room ID: {room?.roomId}</h2>
+      <div className={styles.game}>
+
+        <div className={styles.status}>
+
         { !opponent || (!gameFinished && !opponent.activated) ?
             <h2 className={styles.pulse}>Wait for opponent to join</h2> :
             winner !== null ?
-            <>
-              { winner === me?.id ?
-                  <div className={styles.winningText}>
-                    <Lottie
-                        options={{
-                          loop: false,
-                          autoplay: true,
-                          animationData: confetti,
-                          rendererSettings: {
-                          preserveAspectRatio: "xMidYMid slice",
-                        }}}
-                        width={200}
-                    />
-                  <h2 className={styles.pulse}>You win</h2>
-              </div> : <h2>You lose</h2> }
-                <button className="button" onClick={reactivate}>
-                  Play again
-                </button>
-            </> :
-            (activePlayer === me?.id ? <h2 className={styles.pulse}>your turn {winner}</h2> : <h2>opponents turn {winner}</h2>)
+                <>
+                  { winner === me?.id ?
+                      <div className={styles.winningText}>
+                        <h2 className={styles.pulse}>You win</h2>
+                        <Lottie
+                            options={{
+                              loop: true,
+                              autoplay: true,
+                              animationData: pop,
+                              rendererSettings: {
+                                preserveAspectRatio: "xMidYMid slice",
+                              }}}
+                            height={90}
+                            width={150}
+                        />
+                      </div> : <h2>You lose</h2> }
+                      <button className={classnames('button', styles.playAgain)} onClick={reactivate}>
+                        Play again
+                      </button>
+                </> :
+                (activePlayer === me?.id ? <h2 className={styles.pulse}>your turn {winner}</h2> : <h2>opponents turn {winner}</h2>)
         }
-      <div className={styles.game}>
-        <div className={classnames(styles.controls, styles.me)}>
-          <h3 className={styles.test}>Me: {me?.symbol}</h3>
-          <h3>Score: {me?.score}</h3>
-          { me && nonPlayedStones[me?.id].map(()=>(
-              <Stone emoji={me.symbol || '👽'} color={me?.color} size={4}/>
-          ))}
         </div>
+
         <div className={styles.board}>
           <Board/>
           <div className={styles.fields}>
@@ -182,15 +181,36 @@ export function Game(): JSX.Element {
           </div>
       </div>
 
-     <div className={classnames(styles.controls, styles.opponent)}>
-       {opponent &&
-           <>
-             <h3>Opponent: {opponent?.symbol}</h3>
-             <h3>Score: {opponent?.score}</h3>
-             {nonPlayedStones[opponent.id].map(()=>(
-                 <Stone color={opponent?.color} emoji={opponent?.symbol || "🤖"} size={4}/>
-             ))}
+
+        <div className={styles.playerInfo}>
+          <div className={styles.playerBox}>
+            <div className={styles.head}>
+            <h3>{me?.symbol} Me</h3>
+            <div className={styles.score}>{me?.score}</div>
+            </div>
+            <div className={styles.nonPlayedStones}>
+            { me && nonPlayedStones[me?.id].map(()=>(
+                <Stone emoji={me.symbol} color={me?.color} size={4}/>
+            ))}
+            </div>
+          </div>
+
+          <div className={styles.playerBox}>
+         {opponent &&
+             <>
+               <div className={styles.head}>
+                 <h3>{opponent?.symbol} Opponent</h3>
+                 <div className={styles.score}>
+                   {opponent?.score}
+                 </div>
+               </div>
+               <div className={styles.nonPlayedStones}>
+                  {nonPlayedStones[opponent.id].map(()=>(
+                     <Stone color={opponent?.color} emoji={opponent?.symbol} size={4}/>
+                 ))}
+               </div>
            </>}
+          </div>
         </div>
 
       </div>

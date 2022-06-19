@@ -30,9 +30,14 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  > h2 {
+  flex-direction: column;
+  gap: 0.5rem;
+  /*> h2 {
     position: absolute;
-  }
+    background: darken(theme.$colorPrimary,5);
+    padding: 0.5rem;
+    border: 1px solid theme.$colorSecondary;
+  }*/
 
 }
 .game {
@@ -41,31 +46,65 @@
   flex-wrap: wrap;
   gap: 2rem;
   width: 100%;
+    .playerInfo, .status {
+      flex-grow: 1;
+      flex-basis: 0;
+      text-align: center;
+      padding: 1.5rem;
+      background: darken(theme.$colorPrimary,5);
+      @media screen and (max-width: 996px) {
+        flex-basis: 100%;
+      }
+    }
+    .playerInfo {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      .playerBox {
+        display: flex;
+        gap: 1rem;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: min-content;
+        @media screen and (max-width: 996px) {
+          flex-basis: unset;
+        }
+        .head {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+          .score {
+              font-size: 3rem;
+              font-family: 'Share Tech Mono', monospace;
+          }
+        }
+
+        .nonPlayedStones {
+          gap: 0.5rem;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+    }
+
+    .status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      .playAgain {
+        width: auto;
+      }
+    }
 }
 
 .pulse {
   animation: pulse 1s normal forwards ease-in-out;
 }
 
-.controls {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex: 1;
-  padding: 2rem;
-  @media screen and (max-width: 750px) {
-    flex-direction: row;
-    padding: 0;
-  }
-  &.me {
-    order: 1;
-  }
-  &.opponent {
-    order: 3;
-  }
-}
 
 .board {
   width: 50vw;
@@ -75,10 +114,6 @@
   position: relative;
   min-width: 335px;
   min-height: 335px;
-  order: 2;
-  @media screen and (max-width: 750px) {
-    order: 3;
-  }
 
    > svg {
     position: absolute;
