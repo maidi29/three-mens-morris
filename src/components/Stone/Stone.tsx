@@ -10,7 +10,7 @@ export function Stone({color, emoji, size}: {color?: string, emoji: string, size
           >
               <path {...color && { style: {fill: color}}} d="M24 16.971l-7.029 7.029h-9.942l-7.029-7.029v-9.942l7.029-7.029h9.942l7.029 7.029z"/>
           </svg>
-          <div className={styles.emoji} style={{fontSize: `${size/1.6}rem`}}>{emoji}</div>
+          <div className={styles.emoji} style={{fontSize: `${size/1.75}rem`}}>{emoji}</div>
       </div>
 
   );

@@ -84,7 +84,7 @@ export function Start({ }): JSX.Element {
   return (
       <div className={styles.centerColumn}>
         <div className={styles.centerColumn}>
-            <Stone emoji={chosenEmoji} color={color} size={7}/>
+            <Stone emoji={chosenEmoji} color={color} size={7.5}/>
             <div>
                 <h3>Style your token</h3>
                 <div className={styles.buttonRow}>
