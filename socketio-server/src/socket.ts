@@ -23,7 +23,15 @@ interface Turn {
 export default (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: ["http://localhost:3000", "http://localhost:3006", "https://three-mens-morris.herokuapp.com"],
+      origin: [
+          "http://localhost:3000",
+          "http://localhost:3006",
+          "https://three-mens-morris.herokuapp.com",
+          "https://www.three-mens-morris.com",
+          "http://www.three-mens-morris.com",
+          "https://three-mens-morris.com",
+          "http://three-mens-morris.com",
+      ],
     },
   });
 

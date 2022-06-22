@@ -1,3 +1,9 @@
+export const copyToClipboard = (str: string) => {
+    if (navigator && navigator.clipboard && navigator.clipboard.writeText)
+        return navigator.clipboard.writeText(str);
+    return Promise.reject('The Clipboard API is not available.');
+};
+
 export const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
     let color = '#';

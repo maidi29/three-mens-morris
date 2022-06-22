@@ -8,11 +8,9 @@ Todo:
 - toasts on error (room creation)
 - info bei Klick auf disabled button (status box emphasizen)
 - status box stylen
-- Domain umstellen und in backend eintragen
-- meta info
 - fallback für share button
 - Fehlermeldung wenn Raum schon voll ist
-
+- safari testen
 
 ## Setup
 

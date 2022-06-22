@@ -10,6 +10,7 @@ import {Board} from "../Board/Board";
 import roomService from "../../services/roomService";
 import Lottie from 'react-lottie';
 import pop from '../../lotties/pop.json';
+import {copyToClipboard} from "../../utils/helper";
 
 export type Coordinate = {x: number, y: number};
 
@@ -124,13 +125,14 @@ export function Game(): JSX.Element {
                     if (navigator.share) {
                       navigator.share({
                         title: 'Invite',
+                        text: "Play Three Men's Morris with me!",
                         url: `${window.location}?id=${room?.roomId}`
-                      }).then(() => {
-                        console.log('Thanks for sharing!');
-                      })
-                          .catch(console.error);
+                      }).catch(console.error);
                     } else {
-                      //shareDialog.classList.add('is-open');
+                      copyToClipboard(`${window.location}?id=${room?.roomId}`).then(
+                          // Todo: use toast instead
+                          () => alert(`The invite link ${window.location}?id=${room?.roomId} was copied to clipboard`),
+                          () => alert(`Failed to copy the invite link ${window.location}?id=${room?.roomId}. Please copy it yourself or give the the Game ID to the opponent.`));
                     }
                   }}>
                     <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">

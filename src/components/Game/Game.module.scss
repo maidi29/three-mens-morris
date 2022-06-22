@@ -160,11 +160,11 @@
       position: absolute;
       align-items: flex-start;
       justify-content: flex-start;
-      transition: transform 1s ease-in-out;
+      transition: transform 750ms ease-in-out;
       pointer-events: none;
       z-index: 2;
       > * {
-        transition: transform 1s ease-in-out;
+        transition: transform 750ms ease-in-out;
       }
     }
 
