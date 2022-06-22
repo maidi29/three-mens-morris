@@ -11,6 +11,7 @@ Todo:
 - Domain umstellen und in backend eintragen
 - meta info
 - fallback für share button
+- Fehlermeldung wenn Raum schon voll ist
 
 
 ## Setup

@@ -52,6 +52,9 @@
       text-align: center;
       padding: 1.5rem;
       background: darken(theme.$colorPrimary,3);
+      @media screen and (min-width: 997px) {
+        max-width: 320px;
+      }
       @media screen and (max-width: 996px) {
         flex-basis: 100%;
       }
@@ -61,6 +64,7 @@
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: space-evenly;
+      gap: 3rem;
       .playerBox {
         display: flex;
         gap: 1rem;
