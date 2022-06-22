@@ -1,5 +1,18 @@
 # Three Men's Morris
 
+Todo:
+- how to play
+- Impressum
+- code refactoren
+- coole animations?
+- toasts on error (room creation)
+- info bei Klick auf disabled button (status box emphasizen)
+- status box stylen
+- Domain umstellen und in backend eintragen
+- meta info
+- fallback für share button
+
+
 ## Setup
 
 In the root project directory, run:

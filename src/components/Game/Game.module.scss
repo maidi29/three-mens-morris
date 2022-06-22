@@ -51,7 +51,7 @@
       flex-basis: 0;
       text-align: center;
       padding: 1.5rem;
-      background: darken(theme.$colorPrimary,5);
+      background: darken(theme.$colorPrimary,3);
       @media screen and (max-width: 996px) {
         flex-basis: 100%;
       }
@@ -67,6 +67,11 @@
         flex-direction: column;
         justify-content: flex-start;
         height: min-content;
+        flex-basis: 100%;
+        > * {
+          max-width: 300px;
+          min-width: 135px;
+        }
         @media screen and (max-width: 996px) {
           flex-basis: unset;
         }
@@ -78,6 +83,17 @@
           .score {
               font-size: 3rem;
               font-family: 'Share Tech Mono', monospace;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              svg {
+                position:absolute;
+                width: 20px;
+                display: none;
+              }
+              svg * {
+                fill: theme.$colorSecondary;
+              }
           }
         }
 
@@ -179,6 +195,31 @@
     }
   }
 
+}
+
+.shareInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  .shareButton {
+    outline: none;
+    background-color: transparent;
+    transition: all 230ms ease-in-out;
+    cursor: pointer;
+    border-radius: 50%;
+    height: 3rem;
+    width: 3rem;
+    border: none;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: theme.$colorSecondary;
+    &:hover {
+      background-color: darken(theme.$colorPrimary, 20%);
+    }
+  }
 }
 
 @keyframes blinker {

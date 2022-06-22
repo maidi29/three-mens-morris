@@ -43,31 +43,44 @@ h1, h2, h3, h4 {
 
 h1 {
   font-size: 3rem;
+  text-align: center;
 }
 
 .button {
   outline: none;
   background-color: theme.$colorTertiary;
-  color: theme.$colorSecondary;
-  border-radius: 2.5rem;
+  color: #0e121b;
+  border-radius: 2rem;
   padding: 0 2rem;
   transition: all 230ms ease-in-out;
   border: 2px solid transparent;
   width: 100%;
-  font-size: 1.5rem;
-  height: 4rem;
+  font-size: 1.2rem;
+  height: 3.5rem;
   line-height: 1;
-  box-shadow: 0px 3px 6px #00000066;
+  box-shadow: 0 3px 6px #00000066;
+  font-weight: bold;
+  &:not([disabled]) {
+    cursor: pointer;
+  }
+
+  &:not([disabled]):hover {
+    background-color: darken(theme.$colorTertiary, 5%);
+    border: 2px solid theme.$colorSecondary;
+  }
 }
 
-.button:not([disabled]) {
-  cursor: pointer;
+.input {
+  outline: none;
+  background-color: theme.$colorSecondary;
+  border-radius: 2rem;
+  padding: 0 2rem;
+  width: 100%;
+  font-size: 1.2rem;
+  height: 3.5rem;
+  line-height: 1;
 }
 
-.button:not([disabled]):hover {
-   background-color: lighten(theme.$colorTertiary, 20%);
-   border: 2px solid #333;
-}
 
 
 

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styles from './Start.module.scss';
 import socketService from "../../services/socketService";
 import roomService from "../../services/roomService";
@@ -17,14 +17,21 @@ export function Start({ }): JSX.Element {
   const [isCreating, setIsCreating] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState<string>(getRandomEmoji());
+    const queryParams = new URLSearchParams(window.location.search);
+    const id = queryParams.get("id")
+
+  useEffect(()=>{
+      if (id) setRoomName(id);
+  },[id]);
+
 
     const onEmojiClick = (event: React.MouseEvent, emoji: IEmojiData) => {
         setChosenEmoji(emoji.emoji);
         setPickerOpen(false);
     };
 
-    const openPicker = () => {
-        setPickerOpen(true)
+    const togglePicker = () => {
+        setPickerOpen(!pickerOpen);
     };
 
 
@@ -79,36 +86,46 @@ export function Start({ }): JSX.Element {
         <div className={styles.centerColumn}>
             <Stone emoji={chosenEmoji} color={color} size={7}/>
             <div>
-                <input type="color" onChange={e => setColor(e.target.value)} value={color}/>
-                <button onClick={()=>openPicker()}>Change icon</button>
-                <button onClick={()=>{
-                    setColor(getRandomColor());
-                    setChosenEmoji(getRandomEmoji())
-                }}>🔀</button>
+                <h3>Style your token</h3>
+                <div className={styles.buttonRow}>
+                    <input className={styles.styleButton} type="color" onChange={e => setColor(e.target.value)} value={color} title="Change color"/>
+                    <button className={styles.styleButton} onClick={()=>togglePicker()} title="Change symbol">{chosenEmoji}</button>
+                    <button className={styles.styleButton} onClick={()=>{
+                        setColor(getRandomColor());
+                        setChosenEmoji(getRandomEmoji())
+                    }} title="Randomize color and symbol">🔀</button>
+                    { pickerOpen && <Picker onEmojiClick={onEmojiClick}
+                                            pickerStyle={{
+                                                boxShadow: 'none',
+                                                borderRadius: '0px',
+                                                position: 'absolute',
+                                                top: '0',
+                                                marginTop: '3rem'
+                    }} disableSearchBar native /> }
+
+                </div>
             </div>
-            { pickerOpen && <Picker onEmojiClick={onEmojiClick} pickerStyle={{ boxShadow: 'none', borderRadius: '0px' }} disableSearchBar native /> }
         </div>
       <div className={styles.start}>
-        <div>
-            <button className="button" type="submit" disabled={isCreating} onClick={()=> start(0)}>
-                  Host Room{isCreating ? "..." : ""}
+          <div>
+            <button className="button" type="submit" disabled={isCreating} onClick={() => start(PLAYER.ZERO)}>
+                  Host Game{isCreating ? "..." : ""}
             </button>
         </div>
-            <div className={styles.centerColumn}>
-              <input
-                  maxLength={5}
-                  placeholder="Room ID"
+            <div className={styles.joinSection}>
+                 <input
+                  className="input"
+                  maxLength={3}
+                  placeholder="Game ID"
                   value={roomName}
                   onChange={handleRoomNameChange}/>
                 <button
                     className="button"
-                    onClick={() => {
-                      start(1);
-                    }}
+                    onClick={() => start(PLAYER.ONE)}
                     type="submit"
                     disabled={isCreating}
                 >
-                  Join Room{isCreating ? "..." : ""}
+                  Join Game{isCreating ? "..." : ""}
                 </button>
             </div>
       </div>
