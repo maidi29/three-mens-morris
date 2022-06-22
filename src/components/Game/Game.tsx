@@ -148,7 +148,7 @@ export function Game(): JSX.Element {
                 <>
                   { winner === me?.id ?
                       <div className={styles.winningText}>
-                        <h2 className={styles.pulse}>You win</h2>
+                        <h2 className={styles.pulse}>Victory</h2>
                         <Lottie
                             options={{
                               loop: true,
@@ -160,7 +160,7 @@ export function Game(): JSX.Element {
                             height={90}
                             width={150}
                         />
-                      </div> : <h2>You lose</h2> }
+                      </div> : <h2>Defeat ☹</h2> }
                       <button className={classnames('button', styles.playAgain)} onClick={reactivate}>
                         Play again
                       </button>
