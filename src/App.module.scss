@@ -6,4 +6,20 @@
   align-items: center;
   justify-content: center;
   min-height: 100%;
+
+  .main {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .footer {
+    margin-top: auto;
+    display: flex;
+    gap: 1rem;
+    a {
+
+    }
+  }
 }

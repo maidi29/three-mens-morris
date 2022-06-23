@@ -2,13 +2,11 @@
 
 Todo:
 - how to play
-- Impressum
 - code refactoren
 - coole animations?
 - toasts on error (room creation)
 - info bei Klick auf disabled button (status box emphasizen)
 - status box stylen
-- fallback für share button
 - Fehlermeldung wenn Raum schon voll ist
 - safari testen
 
