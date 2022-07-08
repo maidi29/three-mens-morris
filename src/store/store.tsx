@@ -1,16 +1,16 @@
 import create from "zustand";
-import {Stone} from "../components/Stone/Stone";
-import {ReactElement} from "react";
-import {Coordinate} from "../components/Game/Game";
-import {checkWinning} from "../utils/boardLogic";
-import produce from 'immer'
+import { Token } from "../components/Token/Token";
+import { ReactElement } from "react";
+import { Coordinate } from "../components/Game/Game";
+import { checkWinning } from "../utils/boardLogic";
+import produce from "immer";
 
 export enum PLAYER {
-    ZERO = 0,
-    ONE = 1
+  ZERO = 0,
+  ONE = 1,
 }
 
-export type Matrix = Array<Array<PLAYER | null>>;
+export type Matrix = (PLAYER | null)[][];
 
 export interface Room {
   roomId: string;
@@ -26,8 +26,8 @@ export interface Player {
 }
 
 export enum PHASE {
-    SET = 'set',
-    MOVE = 'move'
+  SET = "set",
+  MOVE = "move",
 }
 
 interface AppState {
@@ -39,7 +39,11 @@ interface AppState {
   setRoom: (newRoom?: Room) => void;
   gameFinished: boolean;
   setGameFinished: (isFinished: boolean) => void;
-  setActivated: (setMe: boolean, setOpponent: boolean, activated: boolean) => void;
+  setActivated: (
+    setMe: boolean,
+    setOpponent: boolean,
+    activated: boolean
+  ) => void;
   resetActiveGameButKeepRoom: () => void;
   activePlayer: PLAYER | null;
   setActivePlayer: (playerId: PLAYER | null) => void;
@@ -48,130 +52,174 @@ interface AppState {
   adjacentFields: Set<Coordinate>;
   phase: PHASE;
   setPhase: (phase: PHASE) => void;
-  nonPlayedStones: { 0: number[], 1: number[]},
-  playedStones: { element: ReactElement, position:string}[],
-  playStone: (playerId: PLAYER, value: Coordinate, prevValue?: Coordinate) => void;
+  nonPlayedStones: { 0: number[]; 1: number[] };
+  playedStones: { element: ReactElement; position: string }[];
+  playStone: (
+    playerId: PLAYER,
+    value: Coordinate,
+    prevValue?: Coordinate
+  ) => void;
   getPlayerById: (id: PLAYER) => Player | undefined;
-  increaseScore:(id: PLAYER) => void;
-  matrix: Matrix,
-  updateMatrix: ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => void;
+  increaseScore: (id: PLAYER) => void;
+  matrix: Matrix;
+  updateMatrix: (
+    { x, y }: Coordinate,
+    value: PLAYER | null,
+    toBeRemoved?: Coordinate
+  ) => void;
   setAdjacentFields: (adjacentFields: Set<Coordinate>) => void;
   setWinningFields: (winningFields: Set<Coordinate>) => void;
 }
 
 const initMatrix = [
-    [null, null, null],
-    [null, null, null],
-    [null, null, null],
+  [null, null, null],
+  [null, null, null],
+  [null, null, null],
 ];
 
 export const useStore = create<AppState>((set, get) => ({
-    me: undefined,
-    opponent: undefined,
-    room: undefined,
-    setRoom: (newRoom?: Room) => {
-        set({ room: newRoom });
-    },
-    gameFinished: false,
-    setGameFinished: (isFinished) => set({ gameFinished: isFinished }),
-    activePlayer: PLAYER.ZERO,
-    setActivePlayer: (playerId: PLAYER | null) => set( {activePlayer: playerId}),
-    setOpponent: (player?: Player) => set( {opponent: player}),
-    setMe: (player: Player) => set( {me: player}),
-    winner: null,
-    winningFields: new Set<Coordinate>(),
-    adjacentFields: new Set<Coordinate>(),
-    setAdjacentFields: (adjacentFields: Set<Coordinate>) => set({adjacentFields}),
-    setWinningFields: (winningFields: Set<Coordinate>) => set({winningFields}),
-    phase: PHASE.SET,
-    setPhase: (phase: PHASE) => set({phase}),
-    setActivated: (setMe: boolean, setOpponent: boolean, activated: boolean) => {
-        if (setMe) {
-            set(produce((state) => { state.me.activated = activated }));
-        }
-        if (setOpponent) {
-            set(produce((state) => { state.opponent.activated = activated }));
-        }
-    },
-    matrix: [...initMatrix],
-    updateMatrix: ({x, y}: Coordinate, value: PLAYER | null, toBeRemoved?: Coordinate) => {
-        const matrix = get().matrix;
-        const newMatrix = matrix.map((arr)=>arr.slice());
-        if (newMatrix[x][y] === null) {
-            newMatrix[x][y] = value;
-        }
-        if (toBeRemoved) {
-            newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
-        }
-        set ({matrix: [...newMatrix]});
-        set ({adjacentFields: new Set<Coordinate>()});
-        const winnerInfo = checkWinning(newMatrix);
-        if (winnerInfo) {
-            set ({winner: winnerInfo.winner});
-            set ({winningFields: winnerInfo.winningFields});
-        }
-    },
-    playedStones: [],
-    nonPlayedStones: {
-        [PLAYER.ZERO]: [0,1,2],
-        [PLAYER.ONE]: [0,1,2]
-    },
-    playStone: (playerId: PLAYER, {x,y}: Coordinate, prevValue?: Coordinate) => {
-        console.log(x+''+y);
-        const phase = get().phase;
-        if (phase === PHASE.SET) {
-            set(({nonPlayedStones}) =>
-                ({nonPlayedStones: {...nonPlayedStones, [playerId]: nonPlayedStones[playerId].slice(0, -1)}})
-            );
-            const player = get().getPlayerById(playerId);
-            if (player) {
-                set(({playedStones}) => ({
-                    playedStones: [...playedStones, {
-                        element: <Stone emoji={player.symbol} color={player.color} size={4}/>,
-                        position: `${x}${y}`
-                    }]
-                }));
-            }
-            const nPlStones = get().nonPlayedStones;
-            const noMoreStones = Object.values(nPlStones).every((value) => value.length === 0);
-            if (noMoreStones) {
-                set({phase: PHASE.MOVE});
-            }
-        } else if (phase === PHASE.MOVE && prevValue) {
-            const plStones = get().playedStones.map((stone)=> (
-                stone.position === `${prevValue.x}${prevValue.y}` ? {
-                    element: stone.element,
-                    position: `${x}${y}`
-                } : stone
-            ));
-            set(() => ({ playedStones: plStones }));
-        }
-    },
-    getPlayerById: (id: PLAYER): Player | undefined => {
-        const me = get().me;
-        const opponent = get().opponent;
-        return [me,opponent].find((player) => player?.id === id);
-    },
-    increaseScore: (id: PLAYER) => {
-        if (id === get().me?.id) {
-            set(produce((state) => { state.me.score = (get().me?.score || 0) + 1 }));
-        } else if (id === get().opponent?.id) {
-            set(produce((state) => { state.opponent.score = (get().opponent?.score || 0) + 1 }));
-        }
-    },
-    resetActiveGameButKeepRoom: () => {
-        const winner = get().winner;
-        return set((state) => {
-            state.winner = null;
-            state.activePlayer = winner;
-            state.playedStones = [];
-            state.matrix = [...initMatrix];
-            state.nonPlayedStones = {
-                [PLAYER.ZERO]: [0,1,2],
-                [PLAYER.ONE]: [0,1,2]
-            }
-            state.phase = PHASE.SET;
-            state.gameFinished = false;
+  me: undefined,
+  opponent: undefined,
+  room: undefined,
+  setRoom: (newRoom?: Room) => {
+    set({ room: newRoom });
+  },
+  gameFinished: false,
+  setGameFinished: (isFinished) => set({ gameFinished: isFinished }),
+  activePlayer: PLAYER.ZERO,
+  setActivePlayer: (playerId: PLAYER | null) => set({ activePlayer: playerId }),
+  setOpponent: (player?: Player) => set({ opponent: player }),
+  setMe: (player: Player) => set({ me: player }),
+  winner: null,
+  winningFields: new Set<Coordinate>(),
+  adjacentFields: new Set<Coordinate>(),
+  setAdjacentFields: (adjacentFields: Set<Coordinate>) =>
+    set({ adjacentFields }),
+  setWinningFields: (winningFields: Set<Coordinate>) => set({ winningFields }),
+  phase: PHASE.SET,
+  setPhase: (phase: PHASE) => set({ phase }),
+  setActivated: (setMe: boolean, setOpponent: boolean, activated: boolean) => {
+    if (setMe) {
+      set(
+        produce((state) => {
+          state.me.activated = activated;
         })
-    },
+      );
+    }
+    if (setOpponent) {
+      set(
+        produce((state) => {
+          state.opponent.activated = activated;
+        })
+      );
+    }
+  },
+  matrix: [...initMatrix],
+  updateMatrix: (
+    { x, y }: Coordinate,
+    value: PLAYER | null,
+    toBeRemoved?: Coordinate
+  ) => {
+    const matrix = get().matrix;
+    const newMatrix = matrix.map((arr) => arr.slice());
+    if (newMatrix[x][y] === null) {
+      newMatrix[x][y] = value;
+    }
+    if (toBeRemoved) {
+      newMatrix[toBeRemoved.x][toBeRemoved.y] = null;
+    }
+    set({ matrix: [...newMatrix] });
+    set({ adjacentFields: new Set<Coordinate>() });
+    const winnerInfo = checkWinning(newMatrix);
+    if (winnerInfo) {
+      set({ winner: winnerInfo.winner });
+      set({ winningFields: winnerInfo.winningFields });
+    }
+  },
+  playedStones: [],
+  nonPlayedStones: {
+    [PLAYER.ZERO]: [0, 1, 2],
+    [PLAYER.ONE]: [0, 1, 2],
+  },
+  playStone: (
+    playerId: PLAYER,
+    { x, y }: Coordinate,
+    prevValue?: Coordinate
+  ) => {
+    const phase = get().phase;
+    if (phase === PHASE.SET) {
+      set(({ nonPlayedStones }) => ({
+        nonPlayedStones: {
+          ...nonPlayedStones,
+          [playerId]: nonPlayedStones[playerId].slice(0, -1),
+        },
+      }));
+      const player = get().getPlayerById(playerId);
+      if (player) {
+        set(({ playedStones }) => ({
+          playedStones: [
+            ...playedStones,
+            {
+              element: (
+                <Token emoji={player.symbol} color={player.color} size={4} />
+              ),
+              position: `${x}${y}`,
+            },
+          ],
+        }));
+      }
+      const nPlStones = get().nonPlayedStones;
+      const noMoreStones = Object.values(nPlStones).every(
+        (value) => value.length === 0
+      );
+      if (noMoreStones) {
+        set({ phase: PHASE.MOVE });
+      }
+    } else if (phase === PHASE.MOVE && prevValue) {
+      const plStones = get().playedStones.map((stone) =>
+        stone.position === `${prevValue.x}${prevValue.y}`
+          ? {
+              element: stone.element,
+              position: `${x}${y}`,
+            }
+          : stone
+      );
+      set(() => ({ playedStones: plStones }));
+    }
+  },
+  getPlayerById: (id: PLAYER): Player | undefined => {
+    const me = get().me;
+    const opponent = get().opponent;
+    return [me, opponent].find((player) => player?.id === id);
+  },
+  increaseScore: (id: PLAYER) => {
+    if (id === get().me?.id) {
+      set(
+        produce((state) => {
+          state.me.score = (get().me?.score || 0) + 1;
+        })
+      );
+    } else if (id === get().opponent?.id) {
+      set(
+        produce((state) => {
+          state.opponent.score = (get().opponent?.score || 0) + 1;
+        })
+      );
+    }
+  },
+  resetActiveGameButKeepRoom: () => {
+    const winner = get().winner;
+    return set((state) => {
+      state.winner = null;
+      state.activePlayer = winner;
+      state.playedStones = [];
+      state.matrix = [...initMatrix];
+      state.nonPlayedStones = {
+        [PLAYER.ZERO]: [0, 1, 2],
+        [PLAYER.ONE]: [0, 1, 2],
+      };
+      state.phase = PHASE.SET;
+      state.gameFinished = false;
+    });
+  },
 }));

@@ -1,14 +1,16 @@
-import React, {useEffect, useState} from "react";
-import styles from './Start.module.scss';
+import React, { useEffect, useState } from "react";
+import styles from "./Start.module.scss";
 import socketService from "../../services/socketService";
 import roomService from "../../services/roomService";
-import Picker, {IEmojiData} from 'emoji-picker-react';
-import {Stone} from "../Stone/Stone";
-import {getRandomColor, getRandomEmoji} from "../../utils/helper";
-import {PHASE, PLAYER, Player, useStore} from "../../store/store";
+import Picker, { IEmojiData } from "emoji-picker-react";
+import { Token } from "../Token/Token";
+import { getRandomColor, getRandomEmoji } from "../../utils/helper";
+import { PHASE, PLAYER, Player, useStore } from "../../store/store";
 import toast from "react-hot-toast";
+import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
 
-export function Start({ }): JSX.Element {
+export function Start({}): JSX.Element {
   const setRoom = useStore((state) => state.setRoom);
   const setOpponent = useStore((state) => state.setOpponent);
   const setMe = useStore((state) => state.setMe);
@@ -19,23 +21,22 @@ export function Start({ }): JSX.Element {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState<string>(getRandomEmoji());
   const queryParams = new URLSearchParams(window.location.search);
-  const id = queryParams.get("id")
+  const id = queryParams.get("id");
 
-  useEffect(()=>{
-      if (id) setRoomName(id);
-  },[id]);
+  useEffect(() => {
+    if (id) setRoomName(id);
+  }, [id]);
 
+  const onEmojiClick = (event: React.MouseEvent, emoji: IEmojiData) => {
+    setChosenEmoji(emoji.emoji);
+    setPickerOpen(false);
+  };
 
-    const onEmojiClick = (event: React.MouseEvent, emoji: IEmojiData) => {
-        setChosenEmoji(emoji.emoji);
-        setPickerOpen(false);
-    };
+  const togglePicker = () => {
+    setPickerOpen(!pickerOpen);
+  };
 
-    const togglePicker = () => {
-        setPickerOpen(!pickerOpen);
-    };
-
-    const handleRoomNameChange = (e: React.ChangeEvent<any>) => {
+  const handleRoomNameChange = (e: React.ChangeEvent<any>) => {
     const value = e.target.value;
     setRoomName(value);
   };
@@ -43,12 +44,15 @@ export function Start({ }): JSX.Element {
   const start = async (playerId: PLAYER) => {
     const socket = socketService.socket;
     if (!socket) {
-        toast('Error with connection, please reload!', {icon: '❗', duration: 3000});
-        return;
+      toast("Error with connection, please reload!", {
+        icon: "❗",
+        duration: 3000,
+      });
+      return;
     }
-    if (playerId ===  PLAYER.ONE && !roomName) {
-        toast("Please enter a Game ID.", { icon: '❗', duration: 3000});
-        return;
+    if (playerId === PLAYER.ONE && !roomName) {
+      toast("Please enter a Game ID.", { icon: "❗", duration: 3000 });
+      return;
     }
 
     const ownPlayer: Player = {
@@ -57,17 +61,17 @@ export function Start({ }): JSX.Element {
       color,
       score: 0,
       activated: true,
-      socketId: socket.id
+      socketId: socket.id,
     };
 
     setIsCreating(true);
 
     if (playerId === PLAYER.ONE) {
       const roomInfo = await roomService
-          .joinGameRoom(socket, { player: ownPlayer, roomId: roomName })
-          .catch((err) => {
-              toast(err, { icon: '❗', duration: 3000});
-          });
+        .joinGameRoom(socket, { player: ownPlayer, roomId: roomName })
+        .catch((err) => {
+          toast(err, { icon: "❗", duration: 3000 });
+        });
       if (roomInfo) {
         setRoom({ roomId: roomName });
         setOpponent(roomInfo.opponent);
@@ -75,10 +79,10 @@ export function Start({ }): JSX.Element {
       }
     } else {
       const roomId = await roomService
-          .createGameRoom(socket, ownPlayer)
-          .catch((err) => {
-              toast(err, { icon: '❗', duration: 3000});
-          });
+        .createGameRoom(socket, ownPlayer)
+        .catch((err) => {
+          toast(err, { icon: "❗", duration: 3000 });
+        });
       if (roomId) {
         setRoom({ roomId });
       }
@@ -87,55 +91,80 @@ export function Start({ }): JSX.Element {
     setIsCreating(false);
   };
 
-
   return (
+    <div className={styles.centerColumn}>
       <div className={styles.centerColumn}>
-        <div className={styles.centerColumn}>
-            <Stone emoji={chosenEmoji} color={color} size={7.5}/>
-            <div>
-                <h3>Style your token</h3>
-                <div className={styles.buttonRow}>
-                    <input className={styles.styleButton} type="color" onChange={e => setColor(e.target.value)} value={color} title="Change color"/>
-                    <button className={styles.styleButton} onClick={()=>togglePicker()} title="Change symbol">{chosenEmoji}</button>
-                    <button className={styles.styleButton} onClick={()=>{
-                        setColor(getRandomColor());
-                        setChosenEmoji(getRandomEmoji())
-                    }} title="Randomize color and symbol">🔀</button>
-                    { pickerOpen && <Picker onEmojiClick={onEmojiClick}
-                                            pickerStyle={{
-                                                boxShadow: 'none',
-                                                borderRadius: '0px',
-                                                position: 'absolute',
-                                                top: '0',
-                                                marginTop: '3rem'
-                    }} disableSearchBar native /> }
-
-                </div>
-            </div>
-        </div>
-      <div className={styles.start}>
-          <div>
-            <button className="button" type="submit" disabled={isCreating} onClick={() => start(PLAYER.ZERO)}>
-                  Host Game{isCreating ? "..." : ""}
+        <Token emoji={chosenEmoji} color={color} size={7.5} />
+        <div>
+          <h3>Style your token</h3>
+          <div className={styles.buttonRow}>
+            <input
+              className={styles.styleButton}
+              type="color"
+              onChange={(e) => setColor(e.target.value)}
+              value={color}
+              title="Change color"
+            />
+            <button
+              className={styles.styleButton}
+              onClick={() => togglePicker()}
+              title="Change symbol"
+            >
+              {chosenEmoji}
             </button>
+            <button
+              className={styles.styleButton}
+              onClick={() => {
+                setColor(getRandomColor());
+                setChosenEmoji(getRandomEmoji());
+              }}
+              title="Randomize color and symbol"
+            >
+              🔀
+            </button>
+            {pickerOpen && (
+              <Picker
+                onEmojiClick={onEmojiClick}
+                pickerStyle={{
+                  boxShadow: "none",
+                  borderRadius: "0px",
+                  position: "absolute",
+                  top: "0",
+                  marginTop: "3rem",
+                }}
+                disableSearchBar={true}
+                native={true}
+              />
+            )}
+          </div>
         </div>
-            <div className={styles.joinSection}>
-                 <input
-                  className="input"
-                  maxLength={3}
-                  placeholder="Game ID"
-                  value={roomName}
-                  onChange={handleRoomNameChange}/>
-                <button
-                    className="button"
-                    onClick={() => start(PLAYER.ONE)}
-                    type="submit"
-                    disabled={isCreating}
-                >
-                  Join Game{isCreating ? "..." : ""}
-                </button>
-            </div>
       </div>
+      <div className={styles.start}>
+        <div>
+          <Button
+            type="submit"
+            disabled={isCreating}
+            onClick={() => start(PLAYER.ZERO)}
+          >
+            Host Game{isCreating ? "..." : ""}
+          </Button>
+        </div>
+        <div className={styles.joinSection}>
+          <Input
+            maxLength={3}
+            placeholder="Game ID"
+            value={roomName}
+            onChange={handleRoomNameChange}
+          />
+          <Button
+            onClick={() => start(PLAYER.ONE)}
+            type="submit"
+            disabled={isCreating}
+          >
+            Join Game{isCreating ? "..." : ""}
+          </Button>
+        </div>
       </div>
+    </div>
   );
 }
