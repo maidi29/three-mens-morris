@@ -2,18 +2,35 @@
 
 .container {
   display: flex;
-  gap: 2rem;
+  gap: 4rem;
   flex-direction: column;
   padding: 1rem;
   align-items: center;
   justify-content: center;
   min-height: 100%;
+
   .toast {
     background: theme.$colorSecondary;
     color: darken(theme.$colorPrimary,10);
     border-radius: 2rem;
     font-size: 1.2rem;
     font-weight: bold;
+  }
+
+  .main {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .footer {
+    margin-top: auto;
+    display: flex;
+    gap: 1rem;
+    a {
+
+    }
   }
 }
 

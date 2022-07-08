@@ -1,12 +1,30 @@
 import React, { useCallback, useEffect } from "react";
 import socketService from "./services/socketService";
-import { useStore } from "./store/store";
+import {Player, PLAYER, Room, useStore} from "./store/store";
 import { BASE_API_URL } from "./constants/constants";
 import styles from './App.module.scss'
 import {Game} from "./components/Game/Game";
 import {Start} from "./components/Start/Start";
+import { Link, Route, Routes } from "react-router-dom";
+import {PrivacyPolicy} from "./routes/PrivacyPolicy";
 import toast, { Toaster } from "react-hot-toast";
 
+interface MainProps {
+    room?: Room,
+    me?: Player
+}
+const Main = ({room, me}: MainProps): JSX.Element => (
+    <div className={styles.main}>
+        <h1>Three Men's Morris</h1>
+        {room && me ? (
+            <Game />
+        ) : <Start/>}
+        <Toaster toastOptions={{
+            className: styles.toast,
+            duration:3000
+        }}/>
+    </div>
+);
 
 function App(): JSX.Element {
   const room = useStore((state) => state.room);
@@ -47,14 +65,25 @@ function App(): JSX.Element {
 
   return (
     <div className={styles.container}>
-      <h1>Three Men's Morris</h1>
-        {room && me ? (
-            <Game />
-        ) : <Start/>}
-        <Toaster toastOptions={{
-            className: styles.toast,
-            duration:3000
-        }}/>
+        <Routes>
+            <Route path="privacyPolicy" element={<PrivacyPolicy />} />
+            <Route
+                path="*"
+                element={
+                    <Main
+                        room={room}
+                        me={me}
+                    />
+                }
+            />
+        </Routes>
+        <div className={styles.footer}>
+            <Link target="_blank" to="/privacyPolicy">
+                Privacy Policy
+            </Link> |
+            <a href="mailto:hi@three-mens-morris.com">Contact</a> |
+            <a href="https://buymeacoffee.com/maidi">Buy me a donut</a>
+        </div>
     </div>
   );
 }
