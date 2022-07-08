@@ -1,5 +1,6 @@
 {
   "name": "three-mens-morris",
+  "description": "Three men's morris is an abstract strategy game played on a three by three board (counting lines) that is similar to tic-tac-toe",
   "version": "0.1.0",
   "private": true,
   "license": "MIT",

@@ -37,30 +37,34 @@ export default (httpServer) => {
 
 
   io.sockets.on("connection",  (socket) => {
-    let room;
+    let roomId;
     socket.on('create_room', async (player: Player)=> {
-      room = (Math.floor(Math.random()*900) + 100).toString();
-      await socket.join(room);
-      io.sockets.adapter.rooms.get(room)['master'] = player;
-      socket.emit("room_created", room);
+      roomId = (Math.floor(Math.random()*900) + 100).toString();
+      await socket.join(roomId);
+      io.sockets.adapter.rooms.get(roomId)['master'] = player;
+      socket.emit("room_created", roomId);
     });
     socket.on('join_room',  async (message: JoinInfo) => {
-      room = message.roomId;
-      const master = io.sockets.adapter.rooms.get(room)?.['master'];
-      if(!room) {
+      roomId = message.roomId;
+      const master = io.sockets.adapter.rooms.get(roomId)?.['master'];
+      if(!roomId) {
         socket.emit("room_join_error", {
-          error: "No room was found with this ID.",
+          error: "Please enter a room ID.",
         });
       } else {
-        const connectedSockets = io.sockets.adapter.rooms.get(room);
+        const connectedSockets = io.sockets.adapter.rooms.get(roomId);
         const socketRooms = Array.from(socket.rooms.values()).filter(
             (r) => r !== socket.id
         );
-        if (socketRooms.length > 0 || (connectedSockets && connectedSockets.size === 2)) {
+        if (!io.sockets.adapter.rooms.get(roomId)){
           socket.emit("room_join_error", {
-            error: "Room is full please choose another room to play!",
+            error: "No room was found with this ID.",
           });
-        } else if (!connectedSockets?.has(master.socketId)) {
+        } else if (socketRooms.length > 0 || (connectedSockets && connectedSockets.size === 2)) {
+            socket.emit("room_join_error", {
+              error: "Room is full, please choose another room to play.",
+            });
+          } else if (!connectedSockets?.has(master.socketId)) {
             socket.emit("room_join_error", {
               error: "Room was closed, please host or join another room.",
             });
@@ -76,16 +80,16 @@ export default (httpServer) => {
             });
             socket.broadcast.to(message.roomId).emit("opponent_joined", message.player);
           }
-      }
+        }
     });
     socket.on("disconnecting",  () => {
-      socket.broadcast.in(room).emit('opponent_left');
+      socket.broadcast.in(roomId).emit('opponent_left');
     });
     socket.on("turn_finished",  (turn: Turn) => {
-      io.in(room).emit("on_turn_finished", turn);
+      io.in(roomId).emit("on_turn_finished", turn);
     });
     socket.on("reactivate",  () => {
-      socket.broadcast.in(room).emit('on_reactivate');
+      socket.broadcast.in(roomId).emit('on_reactivate');
     });
   });
 

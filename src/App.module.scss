@@ -9,19 +9,18 @@
   justify-content: center;
   min-height: 100%;
 
-  .toast {
-    background: theme.$colorSecondary;
-    color: darken(theme.$colorPrimary,10);
-    border-radius: 2rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
   .main {
     margin-top: auto;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    .toast {
+      background: theme.$colorSecondary;
+      color: darken(theme.$colorPrimary,10);
+      border-radius: 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
   }
 
   .footer {

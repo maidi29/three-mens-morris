@@ -8,6 +8,7 @@ import {Start} from "./components/Start/Start";
 import { Link, Route, Routes } from "react-router-dom";
 import {PrivacyPolicy} from "./routes/PrivacyPolicy";
 import toast, { Toaster } from "react-hot-toast";
+import Collapsible from "react-collapsible";
 
 interface MainProps {
     room?: Room,
@@ -19,6 +20,20 @@ const Main = ({room, me}: MainProps): JSX.Element => (
         {room && me ? (
             <Game />
         ) : <Start/>}
+        {/*<Collapsible trigger={'How to play'}>
+            <div>
+                Three men's morris is an abstract strategy game played on a three by three board (counting lines) that is similar to tic-tac-toe.
+                The winner is the first player to align their three tokens on a line drawn on the board.
+                The game consists of two phases
+
+                1. Phase: Placing Tokens
+                The board is empty to begin the game, and players take turns placing their tokens on empty intersections. Each player has three tokens.
+
+                2. Phase: Moving Tokens
+                Once all pieces are placed (assuming there is no winner by then), play proceeds with each player moving one of their tokens per turn.
+                A token may move to any adjacent linked empty position.
+            </div>
+        </Collapsible>*/}
         <Toaster toastOptions={{
             className: styles.toast,
             duration:3000
