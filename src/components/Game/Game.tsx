@@ -34,13 +34,13 @@ export function Game(): JSX.Element {
     setActivated(true, false, true);
     resetActiveGameButKeepRoom();
     if (socketService.socket) {
-      gameService.reactivate(socketService.socket);
+      void gameService.reactivate(socketService.socket);
     }
   };
 
   const handleReactivate = () => {
     if (socketService.socket) {
-      gameService.onReactivate(socketService.socket, () => {
+      void gameService.onReactivate(socketService.socket, () => {
         setActivated(false, true, true);
       });
     }
@@ -48,7 +48,7 @@ export function Game(): JSX.Element {
 
   const handleTurnFinished = () => {
     if (socketService.socket) {
-      gameService.onTurnFinished(socketService.socket, (turn: Turn) => {
+      void gameService.onTurnFinished(socketService.socket, (turn: Turn) => {
         updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
         setActivePlayer(
           turn.playerId === PLAYER.ZERO ? PLAYER.ONE : PLAYER.ZERO
@@ -60,7 +60,7 @@ export function Game(): JSX.Element {
 
   const handleOpponentLeft = () => {
     if (socketService.socket) {
-      roomService.onOpponentLeft(socketService.socket, () => {
+      void roomService.onOpponentLeft(socketService.socket, () => {
         setOpponent(undefined);
         toast("Opponent left! Start a new game by reloading the page.", {
           icon: "🚪🚶",
@@ -72,7 +72,7 @@ export function Game(): JSX.Element {
 
   const handleOpponentJoin = () => {
     if (socketService.socket) {
-      roomService.onOpponentJoined(socketService.socket, (player) => {
+      void roomService.onOpponentJoined(socketService.socket, (player) => {
         setOpponent(player);
       });
     }
@@ -85,12 +85,14 @@ export function Game(): JSX.Element {
       setActivated(true, true, false);
       increaseScore(winner);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winner]);
 
   useEffect(() => {
     if (!gameFinished) {
       setWinningFields(new Set<Coordinate>());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameFinished]);
 
   useEffect(() => {
@@ -101,6 +103,7 @@ export function Game(): JSX.Element {
       handleReactivate();
       setListenersAttached(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

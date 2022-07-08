@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
 
-export function Start({}): JSX.Element {
+export function Start(): JSX.Element {
   const setRoom = useStore((state) => state.setRoom);
   const setOpponent = useStore((state) => state.setOpponent);
   const setMe = useStore((state) => state.setMe);
@@ -25,6 +25,9 @@ export function Start({}): JSX.Element {
 
   useEffect(() => {
     if (id) setRoomName(id);
+    return () => {
+      setRoomName("");
+    }
   }, [id]);
 
   const onEmojiClick = (event: React.MouseEvent, emoji: IEmojiData) => {

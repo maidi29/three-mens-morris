@@ -3,7 +3,6 @@ import { PHASE, useStore } from "../../store/store";
 import styles from "./StatusBox.module.scss";
 import Lottie from "react-lottie";
 import pop from "../../lotties/pop.json";
-import classnames from "classnames";
 import { Button } from "../Button/Button";
 
 interface StatusBoxProps {

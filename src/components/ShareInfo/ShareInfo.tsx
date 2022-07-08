@@ -1,10 +1,7 @@
 import React from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { Player, Room, useStore } from "../../store/store";
+import toast from "react-hot-toast";
+import { useStore } from "../../store/store";
 import styles from "./ShareInfo.module.scss";
-import { Game } from "../Game/Game";
-import { Start } from "../Start/Start";
-import { Collapsible } from "../Collapsible/Collapsible";
 import { copyToClipboard } from "../../utils/helper";
 
 export const ShareInfo = (): JSX.Element => {

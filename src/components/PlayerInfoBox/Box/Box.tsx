@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import styles from "./Box.module.scss";
 import { Player, useStore } from "../../../store/store";
 import { Token } from "../../Token/Token";

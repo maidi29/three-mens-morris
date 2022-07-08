@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { PHASE, PLAYER, Player, Room, useStore } from "../../store/store";
+import { PHASE, PLAYER, useStore } from "../../store/store";
 import styles from "./Fields.module.scss";
-import { Coordinate, Game } from "../Game/Game";
-import { Start } from "../Start/Start";
-import { Collapsible } from "../Collapsible/Collapsible";
-import { copyToClipboard } from "../../utils/helper";
+import { Coordinate } from "../Game/Game";
 import classnames from "classnames";
 import {
   coordinateExistsInSet,
@@ -73,12 +69,14 @@ export const Fields = (): JSX.Element => {
   return (
     <div className={styles.fields}>
       <>
-        {playedStones.map(({ element, position }) => (
+        {playedStones.map(({ element, position }, index) => (
           <div
-            className={classnames(styles.stone, styles[`s${position}`])}
-            key={position}
+            key={index}
+            className={classnames(styles.token, styles[`s${position}`])}
           >
-            {element}
+            <div className={styles.tokenWrapper}>
+              {element}
+            </div>
           </div>
         ))}
         {matrix.map((row, x) => (

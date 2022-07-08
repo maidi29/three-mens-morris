@@ -29,6 +29,7 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref]);
 
   useEffect(() => {
