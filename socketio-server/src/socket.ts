@@ -49,7 +49,7 @@ export default (httpServer) => {
       const master = io.sockets.adapter.rooms.get(roomId)?.['master'];
       if(!roomId) {
         socket.emit("room_join_error", {
-          error: "Please enter a room ID.",
+          error: "Please provide a Game ID.",
         });
       } else {
         const connectedSockets = io.sockets.adapter.rooms.get(roomId);

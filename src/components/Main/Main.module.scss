@@ -1,0 +1,25 @@
+@use '../../theme';
+
+.main {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  .toast {
+    background: theme.$colorSecondary;
+    color: darken(theme.$colorPrimary,10);
+    border-radius: 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .howToPlay {
+    max-width: 650px;
+    margin-top: 3rem;
+    line-height: 1.2;
+    align-self: center;
+    p, h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+  }
+}

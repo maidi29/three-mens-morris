@@ -13,11 +13,7 @@ The game consists of two phases
  A token may move to any adjacent linked empty position.
 
 Todo:
-- how to play
-- code refactoren
-- coole animations?
-- info bei Klick auf disabled button (status box emphasizen)
-- status box stylen
+- code refactoring
 - safari testen
 
 ## Setup

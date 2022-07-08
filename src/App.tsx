@@ -1,62 +1,28 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import socketService from "./services/socketService";
-import {Player, PLAYER, Room, useStore} from "./store/store";
+import { useStore } from "./store/store";
 import { BASE_API_URL } from "./constants/constants";
 import styles from './App.module.scss'
-import {Game} from "./components/Game/Game";
-import {Start} from "./components/Start/Start";
 import { Link, Route, Routes } from "react-router-dom";
 import {PrivacyPolicy} from "./routes/PrivacyPolicy";
-import toast, { Toaster } from "react-hot-toast";
-import Collapsible from "react-collapsible";
+import toast from "react-hot-toast";
+import {Main} from "./components/Main/Main";
 
-interface MainProps {
-    room?: Room,
-    me?: Player
-}
-const Main = ({room, me}: MainProps): JSX.Element => (
-    <div className={styles.main}>
-        <h1>Three Men's Morris</h1>
-        {room && me ? (
-            <Game />
-        ) : <Start/>}
-        {/*<Collapsible trigger={'How to play'}>
-            <div>
-                Three men's morris is an abstract strategy game played on a three by three board (counting lines) that is similar to tic-tac-toe.
-                The winner is the first player to align their three tokens on a line drawn on the board.
-                The game consists of two phases
-
-                1. Phase: Placing Tokens
-                The board is empty to begin the game, and players take turns placing their tokens on empty intersections. Each player has three tokens.
-
-                2. Phase: Moving Tokens
-                Once all pieces are placed (assuming there is no winner by then), play proceeds with each player moving one of their tokens per turn.
-                A token may move to any adjacent linked empty position.
-            </div>
-        </Collapsible>*/}
-        <Toaster toastOptions={{
-            className: styles.toast,
-            duration:3000
-        }}/>
-    </div>
-);
-
-function App(): JSX.Element {
+export const App = (): JSX.Element => {
   const room = useStore((state) => state.room);
   const me = useStore((state) => state.me);
 
   const connectSocket = async () => {
     await socketService.connect(BASE_API_URL).catch((err) => {
-      // tslint:disable-next-line
-      console.log("Error: ", err);
-      toast('Error while connecting, please reload!', {
-          icon: '❗',
-          duration: 3000
-      });
+      toast('Error while connecting, please reload!', {icon: '❗', duration: 3000});
     });
   };
 
-  const handleBeforeUnload = useCallback(
+    useEffect(() => {
+        void connectSocket();
+    }, []);
+
+  /*const handleBeforeUnload = useCallback(
       (e: BeforeUnloadEvent) => {
         if (!room) return;
         e.preventDefault();
@@ -68,39 +34,23 @@ function App(): JSX.Element {
   );
 
   useEffect(() => {
-    connectSocket();
-  }, []);
-
-  useEffect(() => {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [room, handleBeforeUnload]);
+  }, [room, handleBeforeUnload]);*/
 
   return (
     <div className={styles.container}>
         <Routes>
             <Route path="privacyPolicy" element={<PrivacyPolicy />} />
-            <Route
-                path="*"
-                element={
-                    <Main
-                        room={room}
-                        me={me}
-                    />
-                }
-            />
+            <Route path="*" element={<Main room={room} me={me} />} />
         </Routes>
         <div className={styles.footer}>
-            <Link target="_blank" to="/privacyPolicy">
-                Privacy Policy
-            </Link> |
+            <Link target="_blank" to="/privacyPolicy">Privacy Policy</Link> |
             <a href="mailto:hi@three-mens-morris.com">Contact</a> |
             <a href="https://buymeacoffee.com/maidi">Buy me a donut</a>
         </div>
     </div>
   );
 }
-
-export default App;

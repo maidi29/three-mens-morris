@@ -18,8 +18,8 @@ export function Start({ }): JSX.Element {
   const [isCreating, setIsCreating] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState<string>(getRandomEmoji());
-    const queryParams = new URLSearchParams(window.location.search);
-    const id = queryParams.get("id")
+  const queryParams = new URLSearchParams(window.location.search);
+  const id = queryParams.get("id")
 
   useEffect(()=>{
       if (id) setRoomName(id);
@@ -35,7 +35,6 @@ export function Start({ }): JSX.Element {
         setPickerOpen(!pickerOpen);
     };
 
-
     const handleRoomNameChange = (e: React.ChangeEvent<any>) => {
     const value = e.target.value;
     setRoomName(value);
@@ -43,11 +42,14 @@ export function Start({ }): JSX.Element {
 
   const start = async (playerId: PLAYER) => {
     const socket = socketService.socket;
-    if(!socket) return;
-
-    if (playerId ===  PLAYER.ONE && !roomName) return;
-    let roomInfo;
-    let roomId;
+    if (!socket) {
+        toast('Error with connection, please reload!', {icon: '❗', duration: 3000});
+        return;
+    }
+    if (playerId ===  PLAYER.ONE && !roomName) {
+        toast("Please enter a Game ID.", { icon: '❗', duration: 3000});
+        return;
+    }
 
     const ownPlayer: Player = {
       symbol: chosenEmoji,
@@ -55,19 +57,16 @@ export function Start({ }): JSX.Element {
       color,
       score: 0,
       activated: true,
-        socketId: socket.id
+      socketId: socket.id
     };
 
     setIsCreating(true);
+
     if (playerId === PLAYER.ONE) {
-      roomInfo = await roomService
+      const roomInfo = await roomService
           .joinGameRoom(socket, { player: ownPlayer, roomId: roomName })
           .catch((err) => {
-              toast(err, {
-                  icon: '❗',
-                  duration: 3000
-              });
-              console.log(err);
+              toast(err, { icon: '❗', duration: 3000});
           });
       if (roomInfo) {
         setRoom({ roomId: roomName });
@@ -75,14 +74,10 @@ export function Start({ }): JSX.Element {
         setPhase(PHASE.SET);
       }
     } else {
-      roomId = await roomService
+      const roomId = await roomService
           .createGameRoom(socket, ownPlayer)
           .catch((err) => {
-              toast(err, {
-                  icon: '❗',
-                  duration: 3000
-              });
-              console.log(err);
+              toast(err, { icon: '❗', duration: 3000});
           });
       if (roomId) {
         setRoom({ roomId });
