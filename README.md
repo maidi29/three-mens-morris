@@ -2,14 +2,10 @@
 
 Todo:
 - how to play
-- Impressum
 - code refactoren
 - coole animations?
-- toasts on error (room creation)
 - info bei Klick auf disabled button (status box emphasizen)
 - status box stylen
-- fallback für share button
-- Fehlermeldung wenn Raum schon voll ist
 - safari testen
 
 ## Setup
@@ -20,7 +16,7 @@ In the root project directory, run:
 
 to install all dependencies of server and client.
 
-(If you want to use npm you gave to run `npm install` in the root project directory and in the ***socketio-server*** directory)
+(If you want to use npm you have to run `npm install` in the root project directory and in the ***socketio-server*** directory)
 
 ## Start in production
 
@@ -34,7 +30,7 @@ in the root project directory.
 
 
 ## Start locally
-Change the BASE_API_URL variable in src/utils/constants.ts to 'http://localhost:3000'.
+Change the BASE_API_URL variable in src/utils/constants.ts to 'http://localhost:3006'.
 
 ### Client
 Run 

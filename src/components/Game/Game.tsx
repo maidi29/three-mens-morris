@@ -11,6 +11,7 @@ import roomService from "../../services/roomService";
 import Lottie from 'react-lottie';
 import pop from '../../lotties/pop.json';
 import {copyToClipboard} from "../../utils/helper";
+import toast from "react-hot-toast";
 
 export type Coordinate = {x: number, y: number};
 
@@ -51,7 +52,6 @@ export function Game(): JSX.Element {
   const handleReactivate = () => {
     if (socketService.socket) {
       gameService.onReactivate(socketService.socket, () => {
-        console.log('opponent reactivate');
         setActivated(false, true, true);
       });
     }
@@ -59,8 +59,10 @@ export function Game(): JSX.Element {
 
   const handleOpponentLeft = () => {
     if (socketService.socket) {
-      roomService.onOpponentLeft(socketService.socket, () =>
-        setOpponent(undefined)
+      roomService.onOpponentLeft(socketService.socket, () => {
+            setOpponent(undefined);
+            toast('Opponent left! Start a new game by reloading the page.', {icon:'🚪🚶', duration:3000})
+          }
       );
     }
   };
@@ -130,9 +132,8 @@ export function Game(): JSX.Element {
                       }).catch(console.error);
                     } else {
                       copyToClipboard(`${window.location}?id=${room?.roomId}`).then(
-                          // Todo: use toast instead
-                          () => alert(`The invite link ${window.location}?id=${room?.roomId} was copied to clipboard`),
-                          () => alert(`Failed to copy the invite link ${window.location}?id=${room?.roomId}. Please copy it yourself or give the the Game ID to the opponent.`));
+                          () => toast(`The invite link ${window.location}?id=${room?.roomId} was copied to clipboard.`, {icon:'📋', duration:10000}),
+                          () => alert(`Failed to copy the invite link ${window.location}?id=${room?.roomId}. Please copy it yourself or tell them the Game ID to enter it manually.`));
                     }
                   }}>
                     <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">

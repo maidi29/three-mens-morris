@@ -37,34 +37,45 @@ export default (httpServer) => {
 
 
   io.sockets.on("connection",  (socket) => {
-    console.log("New Socket connected: ", socket.id);
     let room;
-    socket.on('create_room', async (message: Player)=> {
+    socket.on('create_room', async (player: Player)=> {
       room = (Math.floor(Math.random()*900) + 100).toString();
       await socket.join(room);
-      io.sockets.adapter.rooms.get(room)['master'] = message;
+      io.sockets.adapter.rooms.get(room)['master'] = player;
       socket.emit("room_created", room);
     });
     socket.on('join_room',  async (message: JoinInfo) => {
       room = message.roomId;
-      const master = io.sockets.adapter.rooms.get(room)['master'];
+      const master = io.sockets.adapter.rooms.get(room)?.['master'];
       if(!room) {
         socket.emit("room_join_error", {
-          error: "noRoomWithThisId",
+          error: "No room was found with this ID.",
         });
       } else {
-        if (master?.symbol === message.player.symbol) {
+        const connectedSockets = io.sockets.adapter.rooms.get(room);
+        const socketRooms = Array.from(socket.rooms.values()).filter(
+            (r) => r !== socket.id
+        );
+        if (socketRooms.length > 0 || (connectedSockets && connectedSockets.size === 2)) {
           socket.emit("room_join_error", {
-            error: "symbolAlreadyTaken",
+            error: "Room is full please choose another room to play!",
           });
-        } else {
-          message.player.socketId = socket.id;
-          await socket.join(message.roomId);
-          socket.emit("room_joined", {
-            opponent: master,
-          });
-          socket.broadcast.to(message.roomId).emit("opponent_joined", message.player);
-        }
+        } else if (!connectedSockets?.has(master.socketId)) {
+            socket.emit("room_join_error", {
+              error: "Room was closed, please host or join another room.",
+            });
+          } else if (master?.symbol === message.player.symbol) {
+            socket.emit("room_join_error", {
+              error: `Symbol ${message.player.symbol} already taken by opponent. Please choose another symbol.`,
+            });
+          } else {
+            message.player.socketId = socket.id;
+            await socket.join(message.roomId);
+            socket.emit("room_joined", {
+              opponent: master,
+            });
+            socket.broadcast.to(message.roomId).emit("opponent_joined", message.player);
+          }
       }
     });
     socket.on("disconnecting",  () => {

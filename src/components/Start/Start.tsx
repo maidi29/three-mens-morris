@@ -6,6 +6,7 @@ import Picker, {IEmojiData} from 'emoji-picker-react';
 import {Stone} from "../Stone/Stone";
 import {getRandomColor, getRandomEmoji} from "../../utils/helper";
 import {PHASE, PLAYER, Player, useStore} from "../../store/store";
+import toast from "react-hot-toast";
 
 export function Start({ }): JSX.Element {
   const setRoom = useStore((state) => state.setRoom);
@@ -54,6 +55,7 @@ export function Start({ }): JSX.Element {
       color,
       score: 0,
       activated: true,
+        socketId: socket.id
     };
 
     setIsCreating(true);
@@ -61,6 +63,10 @@ export function Start({ }): JSX.Element {
       roomInfo = await roomService
           .joinGameRoom(socket, { player: ownPlayer, roomId: roomName })
           .catch((err) => {
+              toast(err, {
+                  icon: '❗',
+                  duration: 3000
+              });
               console.log(err);
           });
       if (roomInfo) {
@@ -71,7 +77,13 @@ export function Start({ }): JSX.Element {
     } else {
       roomId = await roomService
           .createGameRoom(socket, ownPlayer)
-          .catch((err) => console.log(err));
+          .catch((err) => {
+              toast(err, {
+                  icon: '❗',
+                  duration: 3000
+              });
+              console.log(err);
+          });
       if (roomId) {
         setRoom({ roomId });
       }
