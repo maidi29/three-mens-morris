@@ -6,7 +6,7 @@ import classnames from "classnames";
 import {
   coordinateExistsInSet,
   getAdjacentFields,
-} from "../../../utils/boardLogic";
+} from "../../../utils/gameLogic";
 import socketService from "../../../services/socketService";
 import gameService from "../../../services/gameService";
 import toast from "react-hot-toast";

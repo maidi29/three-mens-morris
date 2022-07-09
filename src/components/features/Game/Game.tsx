@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import gameService, { Turn } from "../../../services/gameService";
 import socketService from "../../../services/socketService";
-import { PLAYER, useStore } from "../../../store/store";
+import {PHASE, PLAYER, useStore} from "../../../store/store";
 import styles from "./Game.module.scss";
 import { Board } from "../../elements/Board/Board";
 import roomService from "../../../services/roomService";
@@ -10,6 +10,10 @@ import { ShareInfo } from "../ShareInfo/ShareInfo";
 import { StatusBox } from "../StatusBox/StatusBox";
 import { PlayerInfoBox } from "../PlayerInfoBox/PlayerInfoBox";
 import { Fields } from "../Fields/Fields";
+import {
+  calculateNewCoordinateOfComputerInMovePhase,
+  calculateNewCoordinateOfComputerInSetPhase
+} from "../../../utils/gameLogic";
 
 export type Coordinate = { x: number; y: number };
 
@@ -19,6 +23,7 @@ export const Game = (): JSX.Element => {
   const setOpponent = useStore((state) => state.setOpponent);
   const winner = useStore((state) => state.winner);
   const me = useStore((state) => state.me);
+  const opponent = useStore((state) => state.opponent);
   const playToken = useStore((state) => state.playToken);
   const resetActiveGameButKeepRoom = useStore(
     (state) => state.resetActiveGameButKeepRoom
@@ -28,10 +33,14 @@ export const Game = (): JSX.Element => {
   const updateMatrix = useStore((state) => state.updateMatrix);
   const setWinningFields = useStore((state) => state.setWinningFields);
   const setActivated = useStore((state) => state.setActivated);
+  const activePlayer = useStore((state) => state.activePlayer);
+  const matrix = useStore((state) => state.matrix);
+  const phase = useStore((state) => state.phase);
+  const takeTurn = useStore((state) => state.takeTurn);
   const [listenersAttached, setListenersAttached] = useState(false);
 
   const reactivate = () => {
-    setActivated(true, false, true);
+    setActivated(true, opponent?.isComputer || false, true);
     resetActiveGameButKeepRoom();
     if (socketService.socket) {
       void gameService.reactivate(socketService.socket);
@@ -54,11 +63,7 @@ export const Game = (): JSX.Element => {
   const handleTurnFinished = () => {
     if (socketService.socket) {
       void gameService.onTurnFinished(socketService.socket, (turn: Turn) => {
-        updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
-        setActivePlayer(
-          turn.playerId === PLAYER.ZERO ? PLAYER.ONE : PLAYER.ZERO
-        );
-        playToken(turn.playerId, turn.newCoordinate, turn.prevCoordinate);
+        takeTurn(turn);
       });
     }
   };
@@ -101,6 +106,21 @@ export const Game = (): JSX.Element => {
   }, [gameFinished]);
 
   useEffect(() => {
+    if (opponent?.isComputer && activePlayer === opponent?.id) {
+      setTimeout(()=> {
+        console.log(phase);
+        takeTurn({
+          ...(phase === PHASE.SET ? {
+            newCoordinate: calculateNewCoordinateOfComputerInSetPhase(matrix)
+          } : {...calculateNewCoordinateOfComputerInMovePhase(matrix)}),
+          playerId: PLAYER.ONE
+        })
+      },1000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePlayer]);
+
+  useEffect(() => {
     if (!listenersAttached) {
       handleOpponentJoin();
       handleOpponentLeft();
@@ -113,7 +133,7 @@ export const Game = (): JSX.Element => {
 
   return (
     <>
-      {me?.id === PLAYER.ZERO && <ShareInfo />}
+      {me?.id === PLAYER.ZERO && !opponent && <ShareInfo />}
       <div className={styles.game}>
         <StatusBox reactivate={reactivate} />
 

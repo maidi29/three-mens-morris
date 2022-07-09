@@ -2,8 +2,13 @@ import create from "zustand";
 import { Token } from "../components/elements/Token/Token";
 import { ReactElement } from "react";
 import { Coordinate } from "../components/features/Game/Game";
-import { checkWinning } from "../utils/boardLogic";
+import {
+  calculateNewCoordinateOfComputerInMovePhase,
+  calculateNewCoordinateOfComputerInSetPhase,
+  checkWinning
+} from "../utils/gameLogic";
 import produce from "immer";
+import {Turn} from "../services/gameService";
 
 export enum PLAYER {
   ZERO = 0,
@@ -25,6 +30,8 @@ export interface Player {
   activated: boolean;
 }
 
+type Opponent = Player & { isComputer?: boolean}
+
 export enum PHASE {
   SET = "set",
   MOVE = "move",
@@ -32,8 +39,8 @@ export enum PHASE {
 
 interface AppState {
   me?: Player;
-  opponent?: Player;
-  setOpponent: (player?: Player) => void;
+  opponent?: Opponent;
+  setOpponent: (player?: Opponent) => void;
   setMe: (player: Player) => void;
   room?: Room;
   setRoom: (newRoom?: Room) => void;
@@ -69,6 +76,7 @@ interface AppState {
   ) => void;
   setAdjacentFields: (adjacentFields: Set<Coordinate>) => void;
   setWinningFields: (winningFields: Set<Coordinate>) => void;
+  takeTurn: (turn: Turn) => void;
 }
 
 const initMatrix = [
@@ -88,7 +96,7 @@ export const useStore = create<AppState>((set, get) => ({
   setGameFinished: (isFinished) => set({ gameFinished: isFinished }),
   activePlayer: PLAYER.ZERO,
   setActivePlayer: (playerId: PLAYER | null) => set({ activePlayer: playerId }),
-  setOpponent: (player?: Player) => set({ opponent: player }),
+  setOpponent: (player?: Opponent) => set({ opponent: player }),
   setMe: (player: Player) => set({ me: player }),
   winner: null,
   winningFields: new Set<Coordinate>(),
@@ -146,6 +154,7 @@ export const useStore = create<AppState>((set, get) => ({
     { x, y }: Coordinate,
     prevValue?: Coordinate
   ) => {
+    console.log('playToken');
     const phase = get().phase;
     if (phase === PHASE.SET) {
       set(({ nonPlayedTokens }) => ({
@@ -172,6 +181,7 @@ export const useStore = create<AppState>((set, get) => ({
       const noMoreTokens = Object.values(nPlTokens).every(
         (value) => value.length === 0
       );
+      console.log({noMoreTokens});
       if (noMoreTokens) {
         set({ phase: PHASE.MOVE });
       }
@@ -206,6 +216,15 @@ export const useStore = create<AppState>((set, get) => ({
         })
       );
     }
+  },
+  takeTurn: (turn: Turn) => {
+    console.log('take turn');
+    get().updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
+    get().playToken(turn.playerId, turn.newCoordinate, turn.prevCoordinate);
+    get().setActivePlayer(
+        turn.playerId === PLAYER.ZERO ? PLAYER.ONE : PLAYER.ZERO
+    );
+    console.log(get().activePlayer, get().phase);
   },
   resetActiveGameButKeepRoom: () => {
     const winner = get().winner;

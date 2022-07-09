@@ -1,17 +1,29 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { useStore } from "../../../store/store";
+import {PLAYER, useStore} from "../../../store/store";
 import styles from "./ShareInfo.module.scss";
-import { copyToClipboard } from "../../../utils/helper";
+import {copyToClipboard, getRandomColor, getRandomEmoji} from "../../../utils/helper";
+import {Button} from "../../elements/Button/Button";
 
 export const ShareInfo = (): JSX.Element => {
   const room = useStore((state) => state.room);
-  const opponent = useStore((state) => state.opponent);
+  const setOpponent = useStore((state) => state.setOpponent);
+
+  const setComputerOpponent = () => {
+    setOpponent({
+      score: 0,
+      symbol: getRandomEmoji(),
+      color: getRandomColor(),
+      id: PLAYER.ONE,
+      isComputer: true,
+      activated: true
+    })
+  }
 
   return (
+      <div className={styles.container}>
     <div className={styles.shareInfo}>
       <h2>Game ID: {room?.roomId}</h2>
-      {!opponent && (
         <button
           className={styles.shareButton}
           onClick={() => {
@@ -55,7 +67,9 @@ export const ShareInfo = (): JSX.Element => {
             />
           </svg>
         </button>
-      )}
     </div>
+        <Button onClick={setComputerOpponent}>Play against computer</Button>
+      </div>
+
   );
 };
