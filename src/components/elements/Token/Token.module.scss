@@ -1,0 +1,20 @@
+@use '../../../theme';
+
+.token {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  width: min-content;
+  .emoji {
+    line-height: 1;
+    position: absolute;
+  }
+}
+.octagon {
+  overflow: visible;
+  * {
+    fill: theme.$colorSecondary;
+    filter: drop-shadow( 0px 1px 1px rgba(0, 0, 0, .6));
+  }
+}

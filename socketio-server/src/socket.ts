@@ -35,7 +35,6 @@ export default (httpServer) => {
     },
   });
 
-
   io.sockets.on("connection",  (socket) => {
     let roomId;
     socket.on('create_room', async (player: Player)=> {

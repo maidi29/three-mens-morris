@@ -1,0 +1,69 @@
+@use '../../../theme';
+
+.statusBox {
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: center;
+  padding: 3rem;
+  background: darken(theme.$colorPrimary,3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 3rem;
+  @media screen and (min-width: 997px) {
+    max-width: 320px;
+  }
+  @media screen and (max-width: 996px) {
+    flex-basis: 100%;
+  }
+  > * {
+    flex: 1;
+  }
+  .statusInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    .playAgain {
+      width: auto;
+    }
+  }
+  .phaseInfo {
+    @media screen and (max-width: 997px) {
+      display: none
+    }
+    text-align: left;
+    color: darken(theme.$colorSecondary, 20);
+    h3 {
+      color: darken(theme.$colorSecondary, 20);
+      margin-bottom: 1rem;
+    }
+  }
+  .winningText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.pulse {
+  animation: pulse 0.5s normal forwards ease-in-out;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+
+  50% {
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+
+  to {
+    transform: scale3d(1, 1, 1);
+  }
+}

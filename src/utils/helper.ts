@@ -4,7 +4,7 @@ export const copyToClipboard = (str: string) => {
   return Promise.reject("The Clipboard API is not available.");
 };
 
-export const getRandomColor = () => {
+export const getRandomColor = (): string => {
   const letters = "0123456789ABCDEF";
   let color = "#";
   for (let i = 0; i < 6; i++) {
@@ -13,7 +13,7 @@ export const getRandomColor = () => {
   return color;
 };
 
-const emojis = [
+const emojis: string[] = [
   "😄",
   "😃",
   "😀",
@@ -635,5 +635,5 @@ const emojis = [
   "💯",
 ];
 
-export const getRandomEmoji = () =>
+export const getRandomEmoji = (): string =>
   emojis[Math.floor(Math.random() * emojis.length)];

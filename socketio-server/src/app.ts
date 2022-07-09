@@ -7,12 +7,10 @@ import "reflect-metadata";
 
 var indexRouter = require("./routes/index");
  // const buildPath = path.join(__dirname, 'public');
-// for heroku
 const buildPath = path.join(__dirname, '../..', 'build');
 
 var app = express();
 
-// for heroku
 app.set('views', buildPath);
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
@@ -26,18 +24,17 @@ app.use(express.static(buildPath));
 
 app.use("/", indexRouter);
 
-// for heroku
-app.get('/*', function (req, res) {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

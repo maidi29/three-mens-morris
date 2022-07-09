@@ -1,0 +1,27 @@
+@use '../../../theme';
+
+.button {
+  outline: none;
+  background-color: theme.$colorTertiary;
+  color: #0e121b;
+  border-radius: 2rem;
+  padding: 0 2rem;
+  transition: all 230ms ease-in-out;
+  border: 2px solid transparent;
+  width: 100%;
+  font-size: 1.5rem;
+  height: 3.5rem;
+  line-height: 1;
+  box-shadow: 0 3px 6px #00000066;
+  font-weight: bold;
+  font-family: theme.$fontFamily;
+
+  &:not([disabled]) {
+    cursor: pointer;
+  }
+
+  &:not([disabled]):hover {
+    background-color: darken(theme.$colorTertiary, 5%);
+    border: 2px solid theme.$colorSecondary;
+  }
+}

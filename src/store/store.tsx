@@ -1,7 +1,7 @@
 import create from "zustand";
-import { Token } from "../components/Token/Token";
+import { Token } from "../components/elements/Token/Token";
 import { ReactElement } from "react";
-import { Coordinate } from "../components/Game/Game";
+import { Coordinate } from "../components/features/Game/Game";
 import { checkWinning } from "../utils/boardLogic";
 import produce from "immer";
 
@@ -52,9 +52,9 @@ interface AppState {
   adjacentFields: Set<Coordinate>;
   phase: PHASE;
   setPhase: (phase: PHASE) => void;
-  nonPlayedStones: { 0: number[]; 1: number[] };
-  playedStones: { element: ReactElement; position: string }[];
-  playStone: (
+  nonPlayedTokens: { 0: number[]; 1: number[] };
+  playedTokens: { element: ReactElement; position: string }[];
+  playToken: (
     playerId: PLAYER,
     value: Coordinate,
     prevValue?: Coordinate
@@ -136,29 +136,29 @@ export const useStore = create<AppState>((set, get) => ({
       set({ winningFields: winnerInfo.winningFields });
     }
   },
-  playedStones: [],
-  nonPlayedStones: {
+  playedTokens: [],
+  nonPlayedTokens: {
     [PLAYER.ZERO]: [0, 1, 2],
     [PLAYER.ONE]: [0, 1, 2],
   },
-  playStone: (
+  playToken: (
     playerId: PLAYER,
     { x, y }: Coordinate,
     prevValue?: Coordinate
   ) => {
     const phase = get().phase;
     if (phase === PHASE.SET) {
-      set(({ nonPlayedStones }) => ({
-        nonPlayedStones: {
-          ...nonPlayedStones,
-          [playerId]: nonPlayedStones[playerId].slice(0, -1),
+      set(({ nonPlayedTokens }) => ({
+        nonPlayedTokens: {
+          ...nonPlayedTokens,
+          [playerId]: nonPlayedTokens[playerId].slice(0, -1),
         },
       }));
       const player = get().getPlayerById(playerId);
       if (player) {
-        set(({ playedStones }) => ({
-          playedStones: [
-            ...playedStones,
+        set(({ playedTokens }) => ({
+          playedTokens: [
+            ...playedTokens,
             {
               element: (
                 <Token emoji={player.symbol} color={player.color} size={4} />
@@ -168,23 +168,23 @@ export const useStore = create<AppState>((set, get) => ({
           ],
         }));
       }
-      const nPlStones = get().nonPlayedStones;
-      const noMoreStones = Object.values(nPlStones).every(
+      const nPlTokens = get().nonPlayedTokens;
+      const noMoreTokens = Object.values(nPlTokens).every(
         (value) => value.length === 0
       );
-      if (noMoreStones) {
+      if (noMoreTokens) {
         set({ phase: PHASE.MOVE });
       }
     } else if (phase === PHASE.MOVE && prevValue) {
-      const plStones = get().playedStones.map((stone) =>
-        stone.position === `${prevValue.x}${prevValue.y}`
+      const plTokens = get().playedTokens.map((token) =>
+        token.position === `${prevValue.x}${prevValue.y}`
           ? {
-              element: stone.element,
+              element: token.element,
               position: `${x}${y}`,
             }
-          : stone
+          : token
       );
-      set(() => ({ playedStones: plStones }));
+      set(() => ({ playedTokens: plTokens }));
     }
   },
   getPlayerById: (id: PLAYER): Player | undefined => {
@@ -212,9 +212,9 @@ export const useStore = create<AppState>((set, get) => ({
     return set((state) => {
       state.winner = null;
       state.activePlayer = winner;
-      state.playedStones = [];
+      state.playedTokens = [];
       state.matrix = [...initMatrix];
-      state.nonPlayedStones = {
+      state.nonPlayedTokens = {
         [PLAYER.ZERO]: [0, 1, 2],
         [PLAYER.ONE]: [0, 1, 2],
       };

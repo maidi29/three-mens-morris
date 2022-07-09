@@ -1,0 +1,79 @@
+@use '../../../theme';
+
+@function getTransValue($pos) {
+  @if ($pos == 0) {
+    @return 0;
+  } @else if ($pos == 1) {
+    @return 50%;
+  } @else if ($pos == 2) {
+    @return 100%;
+  }
+}
+
+@mixin sxy {
+  @for $x from 0 through 2 {
+    @for $y from 0 through 2 {
+      $transX: getTransValue($y);
+      $transY: getTransValue($x);
+      .s#{$x}#{$y} {
+        transform: translate3d($transX,$transY,0);
+        > * {
+          transform: translate3d(-$transX,-$transY,0);
+        }
+      }
+    }
+  }
+}
+
+@include sxy;
+
+.token {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: transform 750ms ease-in-out;
+  pointer-events: none;
+  z-index: 2;
+  .tokenWrapper {
+    transition: transform 750ms ease-in-out;
+    > * {
+      transition: none;
+      // animation: rotate-center 0.6s ease-in-out both;
+      // animation: flip-horizontal-bottom 0.4s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+      animation: appear 0.5s cubic-bezier(0.26, 0.53, 0.74, 1.48);
+    }
+  }
+}
+
+@keyframes appear {
+  0% {
+    transform: scale(1.5, 1.5);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+/*@keyframes flip-horizontal-bottom {
+  0% {
+    transform: rotateX(0);
+  }
+  50% {
+    transform: rotateX(-180deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+@keyframes rotate-center {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}*/

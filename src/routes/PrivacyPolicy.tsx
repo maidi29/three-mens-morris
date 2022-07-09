@@ -1,4 +1,4 @@
-export const PrivacyPolicy = () => (
+export const PrivacyPolicy = (): JSX.Element => (
   <div style={{ maxWidth: "700px" }}>
     <h1>Privacy Policy</h1>
     <div>

@@ -1,4 +1,4 @@
-import { Coordinate } from "../components/Game/Game";
+import { Coordinate } from "../components/features/Game/Game";
 import { Matrix } from "../store/store";
 
 export interface WinnerInfo {
@@ -63,7 +63,7 @@ export const coordinateExistsInSet = (
 ): boolean =>
   Array.from(set).some((value) => value.x === coord.x && value.y === coord.y);
 
-export const getAdjacentFields = ({ x, y }: Coordinate) => {
+export const getAdjacentFields = ({ x, y }: Coordinate): Set<Coordinate> => {
   const betweenIndices = (num: number) => num >= 0 && num <= 2;
   const nonDiagonalCoordinates = new Set([
     { x: 1, y: 0 },

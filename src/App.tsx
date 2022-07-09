@@ -6,7 +6,7 @@ import styles from "./App.module.scss";
 import { Link, Route, Routes } from "react-router-dom";
 import { PrivacyPolicy } from "./routes/PrivacyPolicy";
 import toast from "react-hot-toast";
-import { Main } from "./components/Main/Main";
+import { Main } from "./components/features/Main/Main";
 
 export const App = (): JSX.Element => {
   const room = useStore((state) => state.room);

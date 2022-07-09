@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { Coordinate } from "../components/Game/Game";
+import { Coordinate } from "../components/features/Game/Game";
 import { PLAYER } from "../store/store";
 
 export interface Turn {

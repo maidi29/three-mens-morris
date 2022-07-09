@@ -1,0 +1,26 @@
+@use '../../../theme';
+
+.shareInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  .shareButton {
+    outline: none;
+    background-color: transparent;
+    transition: all 230ms ease-in-out;
+    cursor: pointer;
+    border-radius: 50%;
+    height: 3rem;
+    width: 3rem;
+    border: none;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: theme.$colorSecondary;
+    &:hover {
+      background-color: darken(theme.$colorPrimary, 20%);
+    }
+  }
+}
