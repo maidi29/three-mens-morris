@@ -11,10 +11,11 @@
   align-items: center;
   justify-content: space-evenly;
   gap: 3rem;
-  @media screen and (min-width: 997px) {
+  min-width: 320px;
+  @media screen and (min-width: 1409px) {
     max-width: 320px;
   }
-  @media screen and (max-width: 996px) {
+  @media screen and (max-width: 1408px) {
     flex-basis: 100%;
   }
   > * {
@@ -30,7 +31,7 @@
     }
   }
   .phaseInfo {
-    @media screen and (max-width: 997px) {
+    @media screen and (max-width: 1408px) {
       display: none
     }
     text-align: left;

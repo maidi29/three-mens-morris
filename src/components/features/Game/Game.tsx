@@ -122,7 +122,7 @@ export const Game = (): JSX.Element => {
       }, 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePlayer]);
+  }, [activePlayer, opponent?.activated]);
 
   useEffect(() => {
     if (!listenersAttached) {
