@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import gameService, { Turn } from "../../../services/gameService";
 import socketService from "../../../services/socketService";
-import {PHASE, PLAYER, useStore} from "../../../store/store";
+import { PHASE, PLAYER, useStore } from "../../../store/store";
 import styles from "./Game.module.scss";
 import { Board } from "../../elements/Board/Board";
 import roomService from "../../../services/roomService";
@@ -12,7 +12,7 @@ import { PlayerInfoBox } from "../PlayerInfoBox/PlayerInfoBox";
 import { Fields } from "../Fields/Fields";
 import {
   calculateNewCoordinateOfComputerInMovePhase,
-  calculateNewCoordinateOfComputerInSetPhase
+  calculateNewCoordinateOfComputerInSetPhase,
 } from "../../../utils/gameLogic";
 
 export type Coordinate = { x: number; y: number };
@@ -33,7 +33,7 @@ export const Game = (): JSX.Element => {
   const phase = useStore((state) => state.phase);
   const takeTurn = useStore((state) => state.takeTurn);
   const resetActiveGameButKeepRoom = useStore(
-      (state) => state.resetActiveGameButKeepRoom
+    (state) => state.resetActiveGameButKeepRoom
   );
   const [listenersAttached, setListenersAttached] = useState(false);
 
@@ -104,15 +104,22 @@ export const Game = (): JSX.Element => {
   }, [gameFinished]);
 
   useEffect(() => {
-    if (opponent?.isComputer && activePlayer === opponent?.id && !gameFinished) {
-      setTimeout(()=> {
+    if (
+      opponent?.isComputer &&
+      activePlayer === opponent?.id &&
+      !gameFinished
+    ) {
+      setTimeout(() => {
         takeTurn({
-          ...(phase === PHASE.SET ? {
-            newCoordinate: calculateNewCoordinateOfComputerInSetPhase(matrix)
-          } : {...calculateNewCoordinateOfComputerInMovePhase(matrix)}),
-          playerId: PLAYER.ONE
-        })
-      },1000);
+          ...(phase === PHASE.SET
+            ? {
+                newCoordinate:
+                  calculateNewCoordinateOfComputerInSetPhase(matrix),
+              }
+            : { ...calculateNewCoordinateOfComputerInMovePhase(matrix) }),
+          playerId: PLAYER.ONE,
+        });
+      }, 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePlayer]);

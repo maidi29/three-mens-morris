@@ -5,10 +5,10 @@ import { Coordinate } from "../components/features/Game/Game";
 import {
   calculateNewCoordinateOfComputerInMovePhase,
   calculateNewCoordinateOfComputerInSetPhase,
-  checkWinning
+  checkWinning,
 } from "../utils/gameLogic";
 import produce from "immer";
-import {Turn} from "../services/gameService";
+import { Turn } from "../services/gameService";
 
 export enum PLAYER {
   ZERO = 0,
@@ -30,7 +30,7 @@ export interface Player {
   activated: boolean;
 }
 
-type Opponent = Player & { isComputer?: boolean}
+type Opponent = Player & { isComputer?: boolean };
 
 export enum PHASE {
   SET = "set",
@@ -219,7 +219,7 @@ export const useStore = create<AppState>((set, get) => ({
     get().updateMatrix(turn.newCoordinate, turn.playerId, turn.prevCoordinate);
     get().playToken(turn.playerId, turn.newCoordinate, turn.prevCoordinate);
     get().setActivePlayer(
-        turn.playerId === PLAYER.ZERO ? PLAYER.ONE : PLAYER.ZERO
+      turn.playerId === PLAYER.ZERO ? PLAYER.ONE : PLAYER.ZERO
     );
   },
   resetActiveGameButKeepRoom: () => {

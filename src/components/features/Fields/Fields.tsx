@@ -98,7 +98,7 @@ export const Fields = (): JSX.Element => {
       <>
         <div className={styles.playedTokens}>
           <div className={styles.tokensWrapper}>
-             <PlayedTokens />
+            <PlayedTokens />
           </div>
         </div>
         {matrix.map((row, x) => (
@@ -110,7 +110,9 @@ export const Fields = (): JSX.Element => {
                   coordinateExistsInSet({ x, y }, winningFields) &&
                     styles.winningField,
                   isFieldActive(value, { x, y }) && styles.activeField,
-                    prevCoordinate?.x === x && prevCoordinate.y === y && styles.selectedField
+                  prevCoordinate?.x === x &&
+                    prevCoordinate.y === y &&
+                    styles.selectedField
                 )}
                 onClick={() => handleFieldClick({ x, y })}
                 disabled={!isFieldEnabled(value, { x, y })}
