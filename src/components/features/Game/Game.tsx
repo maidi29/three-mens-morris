@@ -24,19 +24,17 @@ export const Game = (): JSX.Element => {
   const winner = useStore((state) => state.winner);
   const me = useStore((state) => state.me);
   const opponent = useStore((state) => state.opponent);
-  const playToken = useStore((state) => state.playToken);
-  const resetActiveGameButKeepRoom = useStore(
-    (state) => state.resetActiveGameButKeepRoom
-  );
   const gameFinished = useStore((state) => state.gameFinished);
   const increaseScore = useStore((state) => state.increaseScore);
-  const updateMatrix = useStore((state) => state.updateMatrix);
   const setWinningFields = useStore((state) => state.setWinningFields);
   const setActivated = useStore((state) => state.setActivated);
   const activePlayer = useStore((state) => state.activePlayer);
   const matrix = useStore((state) => state.matrix);
   const phase = useStore((state) => state.phase);
   const takeTurn = useStore((state) => state.takeTurn);
+  const resetActiveGameButKeepRoom = useStore(
+      (state) => state.resetActiveGameButKeepRoom
+  );
   const [listenersAttached, setListenersAttached] = useState(false);
 
   const reactivate = () => {
@@ -106,9 +104,8 @@ export const Game = (): JSX.Element => {
   }, [gameFinished]);
 
   useEffect(() => {
-    if (opponent?.isComputer && activePlayer === opponent?.id) {
+    if (opponent?.isComputer && activePlayer === opponent?.id && !gameFinished) {
       setTimeout(()=> {
-        console.log(phase);
         takeTurn({
           ...(phase === PHASE.SET ? {
             newCoordinate: calculateNewCoordinateOfComputerInSetPhase(matrix)

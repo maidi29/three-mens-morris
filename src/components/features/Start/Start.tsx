@@ -149,7 +149,7 @@ export const Start = (): JSX.Element => {
             disabled={isCreating}
             onClick={() => start(PLAYER.ZERO)}
           >
-            Host Game{isCreating ? "..." : ""}
+            New Game{isCreating ? "..." : ""}
           </Button>
         </div>
         <div className={styles.joinSection}>

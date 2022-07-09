@@ -1,5 +1,6 @@
 import {Coordinate} from "../components/features/Game/Game";
 import {Matrix, PLAYER} from "../store/store";
+import {columns} from "../constants/constants";
 
 export interface WinnerInfo {
   winner: 0 | 1 | null;
@@ -97,17 +98,14 @@ export const getAdjacentFields = ({ x, y }: Coordinate): Set<Coordinate> => {
 export const calculateNewCoordinateOfComputerInMovePhase = (matrix: Matrix): { newCoordinate: Coordinate, prevCoordinate: Coordinate } => {
   // check if computer can win
   let checkTheseCoordinates = getNullishPositionInLineWithTwoValues(matrix, PLAYER.ONE);
-  console.log('I can win with these coordinates', checkTheseCoordinates);
   if (checkTheseCoordinates.length > 0) {
     for(let i = 0; i < checkTheseCoordinates.length; i++) {
       const possibleWin = checkTheseCoordinates[i];
       const adjFields = getAdjacentFields(possibleWin.nullCoordinate);
-      console.log('adjacentFields', adjFields);
       const prevCoordinate = Array.from(adjFields)
           .find((field) => matrix[field.x][field.y] === PLAYER.ONE &&
               !possibleWin.line.find((coord)=>coord.x === field.x && coord.y === field.y));
       if (prevCoordinate) {
-        console.log('winning');
         return {prevCoordinate, newCoordinate: possibleWin.nullCoordinate}
       }
     }
@@ -115,19 +113,16 @@ export const calculateNewCoordinateOfComputerInMovePhase = (matrix: Matrix): { n
 
   //prevent player from winning
   checkTheseCoordinates = getNullishPositionInLineWithTwoValues(matrix, PLAYER.ZERO);
-  console.log('opponent can win with these coordinates', checkTheseCoordinates);
   if (checkTheseCoordinates.length > 0) {
     for (let i = 0; i < checkTheseCoordinates.length; i++) {
       const possibleWin = checkTheseCoordinates[i];
       const adjFields = getAdjacentFields(possibleWin.nullCoordinate);
-      console.log('adjacentFields', adjFields);
       const opponentCanWinWithThisToken = Array.from(adjFields)
           .find((field) => matrix[field.x][field.y] === PLAYER.ZERO &&
               !possibleWin.line.find((coord) => coord.x === field.x && coord.y === field.y));
       if (opponentCanWinWithThisToken) {
         const prevCoordinate = Array.from(adjFields).find((field) => matrix[field.x][field.y] === PLAYER.ONE);
         if (prevCoordinate) {
-          console.log('prevent winning');
           return {prevCoordinate, newCoordinate: possibleWin.nullCoordinate}
         }
       }
@@ -135,36 +130,51 @@ export const calculateNewCoordinateOfComputerInMovePhase = (matrix: Matrix): { n
   }
 
   //make random move
-  console.log('make random move');
+  // Todo: check if with random move other player has chance to win
   const computerTokensWithEmptyAdjacentFields = getCoordinatesWithValue(matrix, PLAYER.ONE).filter((coordinate)=>{
-    return Array.from(getAdjacentFields(coordinate)).filter(
+    return Array.from(getAdjacentFields(coordinate)).some(
         ({ x, y }) => matrix[x][y] === null
     );
   });
-  console.log({computerTokensWithEmptyAdjacentFields});
-
   const prevCoordinate = computerTokensWithEmptyAdjacentFields[Math.floor(Math.random() * computerTokensWithEmptyAdjacentFields.length)];
-  console.log({prevCoordinate});
-
   const emptyAdjacentFields = Array.from(getAdjacentFields(prevCoordinate)).filter(
       ({ x, y }) => matrix[x][y] === null
   );
-  console.log({emptyAdjacentFields});
   const newCoordinate = emptyAdjacentFields[Math.floor(Math.random() * emptyAdjacentFields.length)];
-  console.log({newCoordinate});
   return {newCoordinate, prevCoordinate};
 }
 
 
 export const calculateNewCoordinateOfComputerInSetPhase = (matrix: Matrix): Coordinate => {
+  const playedTokensPlayer = matrix.flatMap((rows)=>rows).filter((value) => value === PLAYER.ZERO);
+  const nextTurnWillBeMove = playedTokensPlayer.length === 3;
+
   // check if computer can win then check if player can win
-  let coordinate = getNullishPositionInLineWithTwoValues(matrix, PLAYER.ONE)?.[0]?.nullCoordinate || getNullishPositionInLineWithTwoValues(matrix, PLAYER.ZERO)?.[0]?.nullCoordinate;
-  if(!coordinate) {
+  let coordinate = getNullishPositionInLineWithTwoValues(matrix, PLAYER.ONE)?.[0]?.nullCoordinate;
+  if(coordinate) return coordinate;
+
+  if (nextTurnWillBeMove) {
+    const checkTheseCoordinates = getNullishPositionInLineWithTwoValues(matrix, PLAYER.ZERO);
+    if (checkTheseCoordinates.length > 0) {
+      for (let i = 0; i < checkTheseCoordinates.length; i++) {
+        const possibleWin = checkTheseCoordinates[i];
+        const adjFields = getAdjacentFields(possibleWin.nullCoordinate);
+        const opponentCanWinWithThisToken = Array.from(adjFields)
+            .find((field) => matrix[field.x][field.y] === PLAYER.ZERO &&
+                !possibleWin.line.find((coord) => coord.x === field.x && coord.y === field.y));
+        if (opponentCanWinWithThisToken) {
+          return possibleWin.nullCoordinate;
+        }
+      }
+    }
+  } else {
+    coordinate = getNullishPositionInLineWithTwoValues(matrix, PLAYER.ZERO)?.[0]?.nullCoordinate;
+    if(coordinate) return coordinate;
+  }
+
     // get random null coordinate
     const nullCoordinates = getCoordinatesWithValue(matrix, null);
-    coordinate = nullCoordinates[Math.floor(Math.random() * nullCoordinates.length)];
-  }
-  return coordinate;
+    return nullCoordinates[Math.floor(Math.random() * nullCoordinates.length)];
 }
 
 const getCoordinatesWithValue = (matrix: Matrix, value: PLAYER | null): Coordinate[] => {
@@ -183,20 +193,8 @@ const getCoordinatesWithValue = (matrix: Matrix, value: PLAYER | null): Coordina
 const getNullishPositionInLineWithTwoValues = (matrix: Matrix, id: PLAYER): PossibleWin[] => {
   const result: {nullCoordinate: Coordinate, line: Coordinate[]}[] = [];
   // columns check
-  const columns: Record<number, Array<Coordinate>> = {
-    0: [],
-    1: [],
-    2: []
-  }
-  for (let y = 0; y < 3; y++) {
-    for (let x = 0; x < 3; x++) {
-     columns[y].push({x,y});
-    }
-  }
-  console.log({columns});
     for(let y = 0; y < Object.values(columns).length; y++) {
-      const columnValues: Array<PLAYER | null> = Object.values(columns)[y].map(({x:a,y:b})=> matrix[a][b]);
-      console.log({columnValues});
+      const columnValues: (PLAYER | null)[] = Object.values(columns)[y].map(({x:a,y:b})=> matrix[a][b]);
       if (lineHasTowValuesOfIdAndOneNullValue(columnValues, id)) {
         const x = columnValues.findIndex((value) => value === null);
         result.push({
@@ -227,9 +225,7 @@ const getNullishPositionInLineWithTwoValues = (matrix: Matrix, id: PLAYER): Poss
   for(let index = 0; index < diagonals.length; index++) {
       const diagonal = diagonals[index];
       const values = diagonal.map(({x,y})=> matrix[x][y]);
-      console.log('diagonalValues', values);
       if (lineHasTowValuesOfIdAndOneNullValue(values, id)) {
-        console.log('found diagonal', diagonals[index]);
         result.push({
           nullCoordinate: diagonals[index].find(({x,y})=>matrix[x][y] === null)!,
           line: diagonals[index]

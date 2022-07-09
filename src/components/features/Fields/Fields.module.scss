@@ -8,6 +8,21 @@
   flex-direction: column;
   justify-content: space-between;
 
+  .playedTokens {
+    overflow: hidden;
+    position: absolute;
+    width: calc(100% + 4rem);
+    height: calc(100% + 4rem);
+    pointer-events: none;
+    padding: 2rem;
+    transform: translate(-2rem, -2rem);
+    > .tokensWrapper {
+      position: absolute;
+      width: calc(100% - 4rem);
+      height: calc(100% - 4rem);
+    }
+  }
+
   .row {
     display: flex;
     justify-content: space-between;
@@ -30,10 +45,13 @@
         color: #000;
       }
       &.winningField {
-        box-shadow: 0 0 .5rem .5rem theme.$colorTertiary;
+        box-shadow: 0 0 .4rem .8rem theme.$colorTertiary;
       }
       &.activeField {
         animation: blinker 1s linear infinite;
+      }
+      &.selectedField {
+        box-shadow: 0 0 .4rem .8rem lighten(theme.$colorPrimary,30);
       }
     }
   }
