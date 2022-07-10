@@ -1,5 +1,7 @@
+import styles from "./PrivacyPolicy.module.scss";
+
 export const PrivacyPolicy = (): JSX.Element => (
-  <div style={{ maxWidth: "700px" }}>
+  <div className={styles.privacyPolicy}>
     <h1>Privacy Policy</h1>
     <div>
       <p>
