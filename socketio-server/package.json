@@ -12,7 +12,6 @@
   "dependencies": {
     "debug": "~4.3.4",
     "express": "~4.17.3",
-    "express-sslify": "^1.2.0",
     "http-errors": "~2.0.0",
     "morgan": "~1.9.1",
     "reflect-metadata": "^0.1.13",

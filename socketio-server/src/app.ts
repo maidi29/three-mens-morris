@@ -1,8 +1,9 @@
 const createError = require("http-errors");
 const express = require("express");
-const enforce = require('express-sslify');
 const path = require("path");
 const logger = require("morgan");
+const ensureSecure = require('./middlewares/ensureSecure');
+
 import "reflect-metadata";
 
  // const buildPath = path.join(__dirname, 'public');
@@ -10,7 +11,7 @@ const buildPath = path.join(__dirname, '../..', 'build');
 const environment = process.env;
 const app = express();
 if (environment.NODE_ENV === 'production') {
-  app.use(enforce.HTTPS());
+  app.use(ensureSecure);
 }
 app.set('views', buildPath);
 app.engine('html', require('ejs').renderFile);
