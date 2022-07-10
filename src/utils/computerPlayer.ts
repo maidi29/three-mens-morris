@@ -143,7 +143,7 @@ const makeRandomNotDangerousMove = (matrix: Matrix): MoveTurnCoordinates => {
     });
 
   const tokensToChooseFrom =
-    possibleTokensWithoutDangerousTokens.length < 0
+    possibleTokensWithoutDangerousTokens.length > 0
       ? possibleTokensWithoutDangerousTokens
       : computerTokensWithEmptyAdjacentFields;
 
