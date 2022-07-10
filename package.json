@@ -22,7 +22,7 @@
   "scripts": {
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start-client": "set PORT=3006 && react-scripts start",
+    "start-client": "set PORT=3006 && set \"NODE_ENV=development\" && react-scripts start",
     "build-client": "react-scripts build",
     "build": "react-scripts build && (cd socketio-server && yarn install)",
     "start": "cd socketio-server && yarn start",

@@ -4,13 +4,15 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon",
-    "start": "ts-node --transpile-only ./src/server.ts",
-    "build": "rimraf build && tsc -p tsconfig.json"
+    "dev": "set \"NODE_ENV=development\" && nodemon",
+    "start": "set \"NODE_ENV=production\" && ts-node --transpile-only ./src/server.ts ",
+    "start:dev": "set \"NODE_ENV=development\" && ts-node --transpile-only ./src/server.ts ",
+    "build": "rimraf build && set \"NODE_ENV=production\" && tsc -p tsconfig.json"
   },
   "dependencies": {
     "debug": "~4.3.4",
     "express": "~4.17.3",
+    "express-sslify": "^1.2.0",
     "http-errors": "~2.0.0",
     "morgan": "~1.9.1",
     "reflect-metadata": "^0.1.13",
