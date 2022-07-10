@@ -11,8 +11,8 @@ import { StatusBox } from "../StatusBox/StatusBox";
 import { PlayerInfoBox } from "../PlayerInfoBox/PlayerInfoBox";
 import { Fields } from "../Fields/Fields";
 import {
-  calculateNewCoordinateOfComputerInMovePhase,
-  calculateNewCoordinateOfComputerInSetPhase,
+  getComputerTurnInMovePhase,
+  getComputerTurnInSetPhase,
 } from "../../../utils/computerPlayer";
 
 export type Coordinate = { x: number; y: number };
@@ -114,9 +114,9 @@ export const Game = (): JSX.Element => {
           ...(phase === PHASE.SET
             ? {
                 newCoordinate:
-                  calculateNewCoordinateOfComputerInSetPhase(matrix),
+                  getComputerTurnInSetPhase(matrix),
               }
-            : { ...calculateNewCoordinateOfComputerInMovePhase(matrix) }),
+            : { ...getComputerTurnInMovePhase(matrix) }),
           playerId: PLAYER.ONE,
         });
       }, 1000);

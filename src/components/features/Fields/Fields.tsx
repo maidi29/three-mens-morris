@@ -40,11 +40,11 @@ export const Fields = (): JSX.Element => {
     }
   };
 
-  const turnFinished = (coord: Coordinate): void => {
+  const turnFinished = (coordinate: Coordinate): void => {
     if (socketService.socket) {
       setPrevCoordinate(undefined);
       void gameService.turnFinished(socketService.socket, {
-        newCoordinate: coord,
+        newCoordinate: coordinate,
         playerId: activePlayer || 0,
         ...(phase === PHASE.MOVE && { prevCoordinate }),
       });
@@ -56,16 +56,16 @@ export const Fields = (): JSX.Element => {
     }
   };
 
-  const isFieldEnabled = (value: PLAYER | null, coord: Coordinate): boolean => {
+  const isFieldEnabled = (value: PLAYER | null, coordinate: Coordinate): boolean => {
     if (activePlayer === me?.id && winner === null && opponent?.activated) {
       if (phase === PHASE.SET) {
         return value === null;
       } else if (phase === PHASE.MOVE) {
-        const emptyAdjacentFields = Array.from(getAdjacentFields(coord)).filter(
+        const emptyAdjacentFields = Array.from(getAdjacentFields(coordinate)).filter(
           ({ x, y }) => matrix[x][y] === null
         );
         return (
-          (coordinateExistsInSet(coord, adjacentFields) && value === null) ||
+          (coordinateExistsInSet(coordinate, adjacentFields) && value === null) ||
           (value === me?.id && emptyAdjacentFields.length > 0)
         );
       }
@@ -74,19 +74,19 @@ export const Fields = (): JSX.Element => {
     return false;
   };
 
-  const isFieldActive = (value: PLAYER | null, coord: Coordinate): boolean => {
-    if (isFieldEnabled(value, coord)) {
+  const isFieldActive = (value: PLAYER | null, coordinate: Coordinate): boolean => {
+    if (isFieldEnabled(value, coordinate)) {
       if (phase === PHASE.MOVE) {
         if (prevCoordinate) {
-          return coordinateExistsInSet(coord, adjacentFields) && value === null;
+          return coordinateExistsInSet(coordinate, adjacentFields) && value === null;
         } else {
           const emptyAdjacentFields = Array.from(
-            getAdjacentFields(coord)
+            getAdjacentFields(coordinate)
           ).filter(({ x, y }) => matrix[x][y] === null);
           return value === me?.id && emptyAdjacentFields.length > 0;
         }
       } else {
-        return isFieldEnabled(value, coord);
+        return isFieldEnabled(value, coordinate);
       }
     } else {
       return false;

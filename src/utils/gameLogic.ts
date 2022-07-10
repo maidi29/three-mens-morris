@@ -58,10 +58,10 @@ export const checkWinning = (matrix: Matrix): WinnerInfo | undefined => {
 };
 
 export const coordinateExistsInSet = (
-  coord: Coordinate,
+  coordinate: Coordinate,
   set: Set<Coordinate>
 ): boolean =>
-  Array.from(set).some((value) => value.x === coord.x && value.y === coord.y);
+  Array.from(set).some((value) => value.x === coordinate.x && value.y === coordinate.y);
 
 export const getAdjacentFields = ({ x, y }: Coordinate): Set<Coordinate> => {
   const betweenIndices = (num: number) => num >= 0 && num <= 2;

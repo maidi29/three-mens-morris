@@ -40,7 +40,7 @@ in the root project directory.
 
 
 ## Start locally
-Change the BASE_API_URL variable in src/utils/constants.ts to 'http://localhost:3006'.
+Change the BASE_API_URL variable in src/utils/constants.ts to 'http://localhost:3000'.
 
 ### Client
 Run 

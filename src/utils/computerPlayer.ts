@@ -30,7 +30,31 @@ const diagonal2 = [
 ];
 const diagonals = [diagonal1, diagonal2];
 
-const checkPossibleWinForAdjacentTokensNotInLine = (
+export const getComputerTurnInMovePhase = (
+    matrix: Matrix
+): MoveTurnCoordinates => {
+  const winTurn = makeComputerWinMovePhase(matrix);
+  if (winTurn) return winTurn;
+
+  const preventTurn = preventPlayerFromWinningMovePhase(matrix);
+  if (preventTurn) return preventTurn;
+
+  return makeRandomNotDangerousMove(matrix);
+};
+
+export const getComputerTurnInSetPhase = (
+    matrix: Matrix
+): Coordinate => {
+  const winCoordinate = makeComputerWinSetPhase(matrix);
+  if (winCoordinate) return winCoordinate;
+
+  const preventCoordinate = preventPlayerFromWinningSetPhase(matrix);
+  if (preventCoordinate) return preventCoordinate;
+
+  return getRandomNullCoordinate(matrix);
+};
+
+const hasCoordinateAdjacentTokensNotInLine = (
   coordinateToCheck: Coordinate,
   line: Coordinate[],
   matrix: Matrix,
@@ -42,7 +66,7 @@ const checkPossibleWinForAdjacentTokensNotInLine = (
     possibleWinToken: Array.from(adjacentFields).find(
       (field) =>
         matrix[field.x][field.y] === playerToCheck &&
-        !line.find((coord) => coord.x === field.x && coord.y === field.y)
+        !line.find((c) => c.x === field.x && c.y === field.y)
     ),
   };
 };
@@ -53,7 +77,7 @@ const makeComputerWinMovePhase = (
   const possibleWins = getPossibleWins(matrix, PLAYER.ONE);
   if (possibleWins.length > 0) {
     for (const { nullCoordinate, line } of possibleWins) {
-      const { possibleWinToken } = checkPossibleWinForAdjacentTokensNotInLine(
+      const { possibleWinToken } = hasCoordinateAdjacentTokensNotInLine(
         nullCoordinate,
         line,
         matrix,
@@ -76,7 +100,7 @@ const preventPlayerFromWinningMovePhase = (
   if (possibleDefeats.length > 0) {
     for (const { nullCoordinate, line } of possibleDefeats) {
       const { adjacentFields, possibleWinToken } =
-        checkPossibleWinForAdjacentTokensNotInLine(
+        hasCoordinateAdjacentTokensNotInLine(
           nullCoordinate,
           line,
           matrix,
@@ -113,7 +137,7 @@ const makeRandomNotDangerousMove = (matrix: Matrix): MoveTurnCoordinates => {
         getAdjacentFields(coordinate)
       ).find((field) => matrix[field.x][field.y] === PLAYER.ZERO);
       return !(
-        coordinateHasTwoOtherValuesInLine(coordinate, matrix, PLAYER.ZERO) &&
+        coordinateHasTwoOtherValuesOfSameIdInLine(coordinate, matrix, PLAYER.ZERO) &&
         playerCanMoveToThisCoordinate
       );
     });
@@ -136,18 +160,6 @@ const makeRandomNotDangerousMove = (matrix: Matrix): MoveTurnCoordinates => {
   return { newCoordinate, prevCoordinate };
 };
 
-export const calculateNewCoordinateOfComputerInMovePhase = (
-  matrix: Matrix
-): MoveTurnCoordinates => {
-  const winTurn = makeComputerWinMovePhase(matrix);
-  if (winTurn) return winTurn;
-
-  const preventTurn = preventPlayerFromWinningMovePhase(matrix);
-  if (preventTurn) return preventTurn;
-
-  return makeRandomNotDangerousMove(matrix);
-};
-
 const makeComputerWinSetPhase = (matrix: Matrix): Coordinate | undefined =>
   getPossibleWins(matrix, PLAYER.ONE)?.[0]?.nullCoordinate;
 
@@ -162,7 +174,7 @@ const preventPlayerFromWinningSetPhase = (
     const possibleDefeats = getPossibleWins(matrix, PLAYER.ZERO);
     if (possibleDefeats.length > 0) {
       for (const { nullCoordinate, line } of possibleDefeats) {
-        const { possibleWinToken } = checkPossibleWinForAdjacentTokensNotInLine(
+        const { possibleWinToken } = hasCoordinateAdjacentTokensNotInLine(
           nullCoordinate,
           line,
           matrix,
@@ -181,18 +193,6 @@ const preventPlayerFromWinningSetPhase = (
 const getRandomNullCoordinate = (matrix: Matrix): Coordinate => {
   const nullCoordinates = getCoordinatesWithValue(matrix, null);
   return nullCoordinates[Math.floor(Math.random() * nullCoordinates.length)];
-};
-
-export const calculateNewCoordinateOfComputerInSetPhase = (
-  matrix: Matrix
-): Coordinate => {
-  const winCoordinate = makeComputerWinSetPhase(matrix);
-  if (winCoordinate) return winCoordinate;
-
-  const preventCoordinate = preventPlayerFromWinningSetPhase(matrix);
-  if (preventCoordinate) return preventCoordinate;
-
-  return getRandomNullCoordinate(matrix);
 };
 
 const getCoordinatesWithValue = (
@@ -279,7 +279,7 @@ const checkOtherValuesInLine = (
   return otherValuesInLine.size === 1 && otherValuesInLine.has(otherId);
 };
 
-const coordinateHasTwoOtherValuesInLine = (
+const coordinateHasTwoOtherValuesOfSameIdInLine = (
   coordinate: Coordinate,
   matrix: Matrix,
   otherId: PLAYER
