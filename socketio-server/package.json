@@ -9,15 +9,10 @@
     "build": "rimraf build && tsc -p tsconfig.json"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.6",
-    "cors": "^2.8.5",
     "debug": "~4.3.4",
     "express": "~4.17.3",
-    "glob": "^7.2.0",
     "http-errors": "~2.0.0",
-    "jade": "~1.11.0",
     "morgan": "~1.9.1",
-    "pm2": "^5.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "socket.io": "^4.4.1",

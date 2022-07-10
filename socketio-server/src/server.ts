@@ -1,24 +1,10 @@
 #!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
 import "reflect-metadata";
 import app from "./app";
 const debug = require("debug")("socketio-server:server");
 import * as http from "http";
 import socketServer from "./socket";
 
-
-/**
- * Create HTTP server.
- */
-const server = http.createServer(app);
-const io = socketServer(server);
-
-/**
- * Normalize a port into a number, string, or false.
- */
 const normalizePort = (val: string) => {
   const port = parseInt(val, 10);
 
@@ -33,9 +19,6 @@ const normalizePort = (val: string) => {
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
 const onError = (error) => {
   if (error.syscall !== "listen") {
     throw error;
@@ -58,9 +41,6 @@ const onError = (error) => {
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
 const onListening = () => {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
@@ -69,15 +49,10 @@ const onListening = () => {
   console.log(`Server running at ${port}`);
 }
 
-/**
- * Get port from environment and store in Express.
- */
+const server = http.createServer(app);
+const io = socketServer(server);
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
