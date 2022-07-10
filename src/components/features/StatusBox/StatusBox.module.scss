@@ -1,53 +1,65 @@
 @use '../../../theme';
 
-.statusBox {
+.row {
   flex-grow: 1;
   flex-basis: 0;
-  text-align: center;
-  padding: 3rem;
-  background: darken(theme.$colorPrimary,3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 3rem;
-  min-width: 320px;
-  @media screen and (min-width: 1409px) {
-    max-width: 320px;
-  }
   @media screen and (max-width: 1408px) {
     flex-basis: 100%;
   }
-  > * {
-    flex: 1;
-  }
-  .statusInfo {
+  .statusBox {
+    text-align: center;
+    padding: 3rem;
+    background: darken(theme.$colorPrimary, 3);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    .playAgain {
-      width: auto;
+    justify-content: space-evenly;
+    gap: 3rem;
+    min-width: 320px;
+    max-width: 650px;
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    @media screen and (min-width: 1409px) {
+      max-width: 320px;
     }
-  }
-  .phaseInfo {
-    @media screen and (max-width: 1408px) {
-      display: none
+
+    > * {
+      flex: 1;
     }
-    text-align: left;
-    color: darken(theme.$colorSecondary, 20);
-    h3 {
+
+    .statusInfo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+
+      .playAgain {
+        width: auto;
+      }
+    }
+
+    .phaseInfo {
+      @media screen and (max-width: 1408px) {
+        display: none
+      }
+      text-align: left;
       color: darken(theme.$colorSecondary, 20);
-      margin-bottom: 1rem;
+
+      h3 {
+        color: darken(theme.$colorSecondary, 20);
+        margin-bottom: 1rem;
+      }
     }
-  }
-  .winningText {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    flex-direction: column;
-    gap: 0.5rem;
+
+    .winningText {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
   }
 }
 

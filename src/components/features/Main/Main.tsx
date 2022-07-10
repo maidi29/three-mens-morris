@@ -23,6 +23,14 @@ export const Main = ({ room, me }: MainProps): JSX.Element => (
           The winner is the first player to align their three tokens on a line
           drawn on the board.
         </p>
+        <p>
+          <img
+            className={styles.screenshot}
+            src={"/images/morris.png"}
+            alt="Screenshot of game board"
+            width="100%"
+          />
+        </p>
         <p>The game consists of two phases:</p>
         <h3>1. Phase: Placing Tokens</h3>
         <p>

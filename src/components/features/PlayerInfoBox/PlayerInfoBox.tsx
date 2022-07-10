@@ -8,9 +8,11 @@ export const PlayerInfoBox = (): JSX.Element => {
   const me = useStore((state) => state.me);
 
   return (
-    <div className={styles.playerInfo}>
-      {me && <Box player={me} name="Me" />}
-      {opponent && <Box player={opponent} name="Opponent" />}
+    <div className={styles.row}>
+      <div className={styles.playerInfo}>
+        {me && <Box player={me} name="Me" />}
+        {opponent && <Box player={opponent} name="Opponent" />}
+      </div>
     </div>
   );
 };

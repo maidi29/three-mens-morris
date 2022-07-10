@@ -2,11 +2,7 @@ import create from "zustand";
 import { Token } from "../components/elements/Token/Token";
 import { ReactElement } from "react";
 import { Coordinate } from "../components/features/Game/Game";
-import {
-  calculateNewCoordinateOfComputerInMovePhase,
-  calculateNewCoordinateOfComputerInSetPhase,
-  checkWinning,
-} from "../utils/gameLogic";
+import { checkWinning } from "../utils/gameLogic";
 import produce from "immer";
 import { Turn } from "../services/gameService";
 

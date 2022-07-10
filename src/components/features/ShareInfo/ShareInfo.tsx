@@ -72,6 +72,7 @@ export const ShareInfo = (): JSX.Element => {
           </svg>
         </button>
       </div>
+      <div>Share the ID with a friend or</div>
       <Button onClick={setComputerOpponent}>Play against computer</Button>
     </div>
   );

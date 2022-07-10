@@ -13,7 +13,7 @@ import { Fields } from "../Fields/Fields";
 import {
   calculateNewCoordinateOfComputerInMovePhase,
   calculateNewCoordinateOfComputerInSetPhase,
-} from "../../../utils/gameLogic";
+} from "../../../utils/computerPlayer";
 
 export type Coordinate = { x: number; y: number };
 

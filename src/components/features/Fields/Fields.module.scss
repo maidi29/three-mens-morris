@@ -48,7 +48,7 @@
         box-shadow: 0 0 .4rem .8rem theme.$colorTertiary;
       }
       &.activeField {
-        animation: blinker 1s linear infinite;
+        animation: blinker 1s linear infinite 0.5s;
       }
       &.selectedField {
         box-shadow: 0 0 .4rem .8rem lighten(theme.$colorPrimary,30);

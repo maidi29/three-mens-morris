@@ -21,5 +21,12 @@
       margin-top: 0;
       margin-bottom: 1rem;
     }
+    .screenshot {
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin: auto;
+      border: 1px solid theme.$colorSecondary;
+    }
   }
 }
