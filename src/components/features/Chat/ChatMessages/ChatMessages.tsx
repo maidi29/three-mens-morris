@@ -50,7 +50,7 @@ export const ChatMessages = (): JSX.Element => {
               "You"
             ) : (
               <>
-                Player
+                Player {' '}
                 <span className={styles.sender}>{sender}</span>
               </>
             )}
