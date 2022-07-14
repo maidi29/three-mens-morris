@@ -4,6 +4,7 @@ import Lottie from "react-lottie";
 import { PHASE, useStore } from "../../../store/store";
 import { Button } from "../../elements/Button/Button";
 import pop from "../../../lotties/pop.json";
+import { Chat } from "../Chat/Chat";
 
 interface StatusBoxProps {
   reactivate: () => void;
@@ -98,6 +99,8 @@ export const StatusBox = ({ reactivate }: StatusBoxProps): JSX.Element => {
               </>
             ))}
         </div>
+        {/* @todo: find better placement for chat box */}
+        <Chat />
       </div>
     </div>
   );

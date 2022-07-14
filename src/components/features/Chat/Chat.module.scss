@@ -1,0 +1,11 @@
+.headline {
+  margin-bottom: 1rem;
+}
+
+.container {
+  display: none;
+
+  @media screen and (min-width: 1409px) {
+    display: block;
+  }
+}

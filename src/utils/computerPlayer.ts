@@ -31,7 +31,7 @@ const diagonal2 = [
 const diagonals = [diagonal1, diagonal2];
 
 export const getComputerTurnInMovePhase = (
-    matrix: Matrix
+  matrix: Matrix
 ): MoveTurnCoordinates => {
   const winTurn = makeComputerWinMovePhase(matrix);
   if (winTurn) return winTurn;
@@ -42,9 +42,7 @@ export const getComputerTurnInMovePhase = (
   return makeRandomNotDangerousMove(matrix);
 };
 
-export const getComputerTurnInSetPhase = (
-    matrix: Matrix
-): Coordinate => {
+export const getComputerTurnInSetPhase = (matrix: Matrix): Coordinate => {
   const winCoordinate = makeComputerWinSetPhase(matrix);
   if (winCoordinate) return winCoordinate;
 
@@ -137,8 +135,11 @@ const makeRandomNotDangerousMove = (matrix: Matrix): MoveTurnCoordinates => {
         getAdjacentFields(coordinate)
       ).find((field) => matrix[field.x][field.y] === PLAYER.ZERO);
       return !(
-        coordinateHasTwoOtherValuesOfSameIdInLine(coordinate, matrix, PLAYER.ZERO) &&
-        playerCanMoveToThisCoordinate
+        coordinateHasTwoOtherValuesOfSameIdInLine(
+          coordinate,
+          matrix,
+          PLAYER.ZERO
+        ) && playerCanMoveToThisCoordinate
       );
     });
 

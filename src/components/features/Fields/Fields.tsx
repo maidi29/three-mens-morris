@@ -56,16 +56,20 @@ export const Fields = (): JSX.Element => {
     }
   };
 
-  const isFieldEnabled = (value: PLAYER | null, coordinate: Coordinate): boolean => {
+  const isFieldEnabled = (
+    value: PLAYER | null,
+    coordinate: Coordinate
+  ): boolean => {
     if (activePlayer === me?.id && winner === null && opponent?.activated) {
       if (phase === PHASE.SET) {
         return value === null;
       } else if (phase === PHASE.MOVE) {
-        const emptyAdjacentFields = Array.from(getAdjacentFields(coordinate)).filter(
-          ({ x, y }) => matrix[x][y] === null
-        );
+        const emptyAdjacentFields = Array.from(
+          getAdjacentFields(coordinate)
+        ).filter(({ x, y }) => matrix[x][y] === null);
         return (
-          (coordinateExistsInSet(coordinate, adjacentFields) && value === null) ||
+          (coordinateExistsInSet(coordinate, adjacentFields) &&
+            value === null) ||
           (value === me?.id && emptyAdjacentFields.length > 0)
         );
       }
@@ -74,11 +78,16 @@ export const Fields = (): JSX.Element => {
     return false;
   };
 
-  const isFieldActive = (value: PLAYER | null, coordinate: Coordinate): boolean => {
+  const isFieldActive = (
+    value: PLAYER | null,
+    coordinate: Coordinate
+  ): boolean => {
     if (isFieldEnabled(value, coordinate)) {
       if (phase === PHASE.MOVE) {
         if (prevCoordinate) {
-          return coordinateExistsInSet(coordinate, adjacentFields) && value === null;
+          return (
+            coordinateExistsInSet(coordinate, adjacentFields) && value === null
+          );
         } else {
           const emptyAdjacentFields = Array.from(
             getAdjacentFields(coordinate)

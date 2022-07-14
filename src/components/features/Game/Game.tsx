@@ -14,6 +14,7 @@ import {
   getComputerTurnInMovePhase,
   getComputerTurnInSetPhase,
 } from "../../../utils/computerPlayer";
+import { Chat } from "../Chat/Chat";
 
 export type Coordinate = { x: number; y: number };
 
@@ -113,8 +114,7 @@ export const Game = (): JSX.Element => {
         takeTurn({
           ...(phase === PHASE.SET
             ? {
-                newCoordinate:
-                  getComputerTurnInSetPhase(matrix),
+                newCoordinate: getComputerTurnInSetPhase(matrix),
               }
             : { ...getComputerTurnInMovePhase(matrix) }),
           playerId: PLAYER.ONE,

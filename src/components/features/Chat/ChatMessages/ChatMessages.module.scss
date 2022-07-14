@@ -1,0 +1,62 @@
+@use "../../../../theme";
+
+.messages {
+  width: 100%;
+  height: 250px;
+  overflow-y: auto;
+
+  & {
+    scrollbar-width: thin;
+    scrollbar-color: theme.$colorPrimary transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: theme.$colorPrimary;
+    border-radius: 20px;
+  }
+}
+
+.messageContainer {
+  display: grid;
+  justify-content: end;
+  margin-bottom: 1rem;
+  margin-right: 0.5rem;
+  grid-gap: 0.5rem;
+  text-align: right;
+}
+
+.message {
+  background: #314160;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  max-width: 150px;
+  word-break: break-word;
+  line-height: 1.5;
+  display: inline-block;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.left {
+  text-align: left;
+  justify-content: start;
+}
+
+.senderName {
+  text-align: inherit;
+  font-size: 0.875rem;
+}
+
+.sender {
+  font-family: "Share Tech Mono", monospace;
+}
