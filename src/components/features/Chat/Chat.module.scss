@@ -1,11 +1,17 @@
+@use '../../../theme';
+.container {
+  display: none;
+  @media screen and (min-width: 1409px) {
+    display: block;
+  }
+}
+
 .headline {
   margin-bottom: 1rem;
 }
 
-.container {
-  display: none;
-
-  @media screen and (min-width: 1409px) {
-    display: block;
-  }
+.chatbox {
+  border: 1px solid #314160;
+  padding: 1rem;
+  background: darken(theme.$colorPrimary, 5);
 }

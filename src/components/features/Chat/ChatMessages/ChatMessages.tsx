@@ -46,14 +46,7 @@ export const ChatMessages = (): JSX.Element => {
           )}
         >
           <div style={{ color }} className={styles.senderName}>
-            {sender === me?.id ? (
-              "You"
-            ) : (
-              <>
-                Player {' '}
-                <span className={styles.sender}>{sender}</span>
-              </>
-            )}
+            {sender === me?.id ? "Me" : "Opponent"}
           </div>
           <div>
             <div className={styles.message}>{text}</div>

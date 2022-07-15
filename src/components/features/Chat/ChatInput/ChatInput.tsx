@@ -52,6 +52,7 @@ export const ChatInput = (): JSX.Element => {
       onKeyDown={handleEnterKey}
       onChange={handleMessageChange}
       placeholder="Enter message..."
+      maxLength={200}
     />
   );
 };

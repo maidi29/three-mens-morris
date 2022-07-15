@@ -45,11 +45,10 @@ export const Start = (): JSX.Element => {
   };
 
   const handleEnterKey = async (event: KeyboardEvent): Promise<void> => {
-    if (
-      event.key === "Enter") {
+    if (event.key === "Enter") {
       await start(PLAYER.ONE);
     }
-  }
+  };
 
   const start = async (playerId: PLAYER) => {
     const socket = socketService.socket;

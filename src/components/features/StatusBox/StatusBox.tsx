@@ -81,26 +81,8 @@ export const StatusBox = ({ reactivate }: StatusBoxProps): JSX.Element => {
     <div className={styles.row}>
       <div className={styles.statusBox}>
         <div className={styles.statusInfo}>{getStatusText()}</div>
-        <div className={styles.phaseInfo}>
-          {phase &&
-            opponent &&
-            !gameFinished &&
-            opponent.activated &&
-            (phase === PHASE.SET ? (
-              <>
-                <h3>Placing Tokens</h3>
-                Players take turns placing their tokens on empty intersections
-              </>
-            ) : (
-              <>
-                <h3>Moving Tokens</h3>
-                Players move one of their tokens per turn to any adjacent linked
-                empty position
-              </>
-            ))}
-        </div>
         {/* @todo: find better placement for chat box */}
-        <Chat />
+        {opponent && !opponent.isComputer && <Chat />}
       </div>
     </div>
   );
