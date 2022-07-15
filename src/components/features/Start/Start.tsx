@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { KeyboardEvent, useEffect, useState } from "react";
 import styles from "./Start.module.scss";
 import socketService from "../../../services/socketService";
 import roomService from "../../../services/roomService";
@@ -42,6 +42,12 @@ export const Start = (): JSX.Element => {
   const handleRoomNameChange = (e: React.ChangeEvent<any>) => {
     const value = e.target.value;
     setRoomName(value);
+  };
+
+  const handleEnterKey = async (event: KeyboardEvent): Promise<void> => {
+    if (event.key === "Enter") {
+      await start(PLAYER.ONE);
+    }
   };
 
   const start = async (playerId: PLAYER) => {
@@ -158,6 +164,7 @@ export const Start = (): JSX.Element => {
             placeholder="Game ID"
             value={roomName}
             onChange={handleRoomNameChange}
+            onKeyDown={handleEnterKey}
           />
           <Button
             onClick={() => start(PLAYER.ONE)}
