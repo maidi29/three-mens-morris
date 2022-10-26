@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": "17.x"
+  },
   "dependencies": {
     "classnames": "^2.3.1",
     "emoji-picker-react": "^3.5.1",
