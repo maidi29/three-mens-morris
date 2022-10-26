@@ -5,7 +5,7 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "17.x"
+    "node": "16.x"
   },
   "dependencies": {
     "classnames": "^2.3.1",
