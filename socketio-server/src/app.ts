@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const logger = require("morgan");
 const ensureSecure = require('./middlewares/ensureSecure');
+require ('newrelic');
 
 import "reflect-metadata";
 

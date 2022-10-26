@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "set \"NODE_ENV=development\" && nodemon",
-    "start": "set \"NODE_ENV=production\" && ts-node --transpile-only ./src/server.ts ",
+    "start": "set \"NODE_ENV=production\" && ts-node --transpile-only ./src/server.ts",
     "start:dev": "set \"NODE_ENV=development\" && ts-node --transpile-only ./src/server.ts ",
     "build": "rimraf build && set \"NODE_ENV=production\" && tsc -p tsconfig.json"
   },
@@ -14,6 +14,7 @@
     "express": "~4.17.3",
     "http-errors": "~2.0.0",
     "morgan": "~1.9.1",
+    "newrelic": "^9.4.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "socket.io": "^4.4.1",
