@@ -28,7 +28,7 @@
     "eject": "react-scripts eject",
     "start-client": "set PORT=3006 && set \"NODE_ENV=development\" && react-scripts start",
     "build-client": "react-scripts build",
-    "build": "react-scripts build --openssl-legacy-provider && (cd socketio-server && yarn install)",
+    "build": "react-scripts build && (cd socketio-server && yarn install)",
     "start": "cd socketio-server && yarn start",
     "lint": "tslint -c tslint.json src/**/*.{ts,tsx} --fix --format verbose"
   },
