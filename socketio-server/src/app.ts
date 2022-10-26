@@ -16,7 +16,7 @@ if (environment.NODE_ENV === 'production') {
 app.set('views', buildPath);
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-app.use(logger("dev"));
+app.use(logger((':date[iso] :url :status :remote-addr')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(buildPath));

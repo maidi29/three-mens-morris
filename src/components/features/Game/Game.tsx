@@ -14,7 +14,6 @@ import {
   getComputerTurnInMovePhase,
   getComputerTurnInSetPhase,
 } from "../../../utils/computerPlayer";
-import { Chat } from "../Chat/Chat";
 
 export type Coordinate = { x: number; y: number };
 

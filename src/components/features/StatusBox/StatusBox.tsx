@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import styles from "./StatusBox.module.scss";
 import Lottie from "react-lottie";
-import { PHASE, useStore } from "../../../store/store";
+import { useStore } from "../../../store/store";
 import { Button } from "../../elements/Button/Button";
 import pop from "../../../lotties/pop.json";
 import { Chat } from "../Chat/Chat";
@@ -10,7 +10,6 @@ interface StatusBoxProps {
   reactivate: () => void;
 }
 export const StatusBox = ({ reactivate }: StatusBoxProps): JSX.Element => {
-  const phase = useStore((state) => state.phase);
   const opponent = useStore((state) => state.opponent);
   const gameFinished = useStore((state) => state.gameFinished);
   const winner = useStore((state) => state.winner);
