@@ -8,12 +8,24 @@
 }
 .start {
   display: flex;
-  gap: 1.5rem;
-  flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  > * {
-    flex-basis: 50%;
+  gap: 1rem;
+  margin: 1rem 0;
+  > *:nth-child(odd) {
+    flex: 1;
+    align-self: flex-end;
+  }
+  .divisor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    .vl {
+      border-left: 1px solid theme.$colorSecondary;
+      height: 100%;
+      margin-left: -1px;
+    }
   }
   .joinSection {
     display: flex;

@@ -158,6 +158,11 @@ export const Start = (): JSX.Element => {
             New Game{isCreating ? "..." : ""}
           </Button>
         </div>
+        <div className={styles.divisor}>
+          <div className={styles.vl}></div>
+          <div>or</div>
+          <div className={styles.vl}></div>
+        </div>
         <div className={styles.joinSection}>
           <Input
             maxLength={3}
