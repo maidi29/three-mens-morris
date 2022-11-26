@@ -5,6 +5,11 @@
   display: flex;
   flex-direction: column;
   gap: 3rem;
+  h1 {
+    font-family: Mansalva, sans-serif;
+    font-size: 3.7rem;
+    font-weight: normal;
+  }
   .toast {
     background: theme.$colorSecondary;
     color: darken(theme.$colorPrimary,10);
