@@ -17,6 +17,11 @@
   min-width: 335px;
   min-height: 335px;
 
+  @media screen and (max-width: 400px) {
+    min-width: 90vw;
+    min-height: 90vw;
+  }
+
    > svg {
     position: absolute;
     margin: 2rem;

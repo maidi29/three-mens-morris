@@ -36,7 +36,7 @@ export const ShareInfo = (): JSX.Element => {
                 .share({
                   title: "Invite",
                   text: "Play Three Men's Morris with me!",
-                  url: `${window.location}?id=${room?.roomId}`,
+                  url: `${window.location.origin + window.location.pathname}?id=${room?.roomId}`,
                 })
                 .catch();
             } else {
