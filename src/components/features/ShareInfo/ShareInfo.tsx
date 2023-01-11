@@ -30,6 +30,7 @@ export const ShareInfo = (): JSX.Element => {
         <h2>Game ID: {room?.roomId}</h2>
         <button
           className={styles.shareButton}
+          title="Share"
           onClick={() => {
             if (navigator.share) {
               navigator
