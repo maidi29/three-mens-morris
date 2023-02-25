@@ -54,7 +54,8 @@ export const App = (): JSX.Element => {
           Privacy Policy
         </Link>{" "}
         |<a href="mailto:hi@three-mens-morris.com">Contact</a> |
-        <a href="https://buymeacoffee.com/maidi">Buy me a donut</a>
+        <a href="https://buymeacoffee.com/maidi" target="_blank">Buy me a donut</a> |
+        <a href="https://www.mermaidi.de" target="_blank">👽 Maidi</a>
       </div>
     </div>
   );

@@ -53,3 +53,20 @@ You will also see any lint errors in the console.
 Run 
 #### `yarn run dev` (or `npm run dev`)
 in the ***socketio-server*** directory to start the backend under [http://localhost:3000](http://localhost:3000)
+
+
+## AI
+
+Collect a dataset of historical games: This dataset should include the game state at each move, the move made by the player (or the computer), and the outcome of the game (win, lose, or draw).
+
+Preprocess the data: Prepare the data for the model by converting the game state into a format that can be used as input for the model. For example, the game state can be represented by a matrix where each cell contains a value indicating the player that has a token in that cell, or by a vector of features that describe the state of the game.
+
+Split the data into training and testing sets: Divide the dataset into two sets, one for training the model and one for evaluating its performance.
+
+Choose a model architecture and train it: Select a suitable model architecture, such as a neural network, and train it on the training set. The model should take the game state as input and output the best move to make.
+
+Evaluate the model's performance: Use the testing set to evaluate the performance of the model. Compare the predictions made by the model with the actual moves made in the games, and calculate metrics such as accuracy, precision, and recall.
+
+Fine-tune and improve the model: Based on the results obtained in step 5, you can fine-tune the model's architecture, the hyperparameters, and the dataset.
+
+Test the model on new unseen games: Finally, test the model on new games that it has never seen before, and evaluate its performance against the current algorithm or human players.
