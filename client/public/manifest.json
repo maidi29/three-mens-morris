@@ -1,0 +1,9 @@
+{
+  "short_name": "Three Men's Morris",
+  "name": "Three Men's Morris",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#314160",
+  "background_color": "#314160"
+}

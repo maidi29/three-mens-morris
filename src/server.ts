@@ -51,7 +51,7 @@ const onListening = () => {
 
 const server = http.createServer(app);
 const io = socketServer(server);
-const port = normalizePort(process.env.PORT || "3000");
+const port = normalizePort(process.env.PORT || "8080");
 app.set("port", port);
 server.listen(port);
 server.on("error", onError);

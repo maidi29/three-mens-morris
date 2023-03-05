@@ -1,69 +1,31 @@
 {
   "name": "three-mens-morris",
   "description": "Three men's morris is an abstract strategy game played on a three by three board (counting lines) that is similar to tic-tac-toe",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "license": "MIT",
-  "engines": {
-    "node": "18.x"
+  "scripts": {
+    "dev": "set \"NODE_ENV=development\" && nodemon",
+    "start": "set \"NODE_ENV=production\" && ts-node --transpile-only ./src/server.ts",
+    "build": "cd client && npm ci && npm run build",
+    "build:server": "rimraf build && set \"NODE_ENV=production\" && tsc -p tsconfig.json",
+    "start:client": "cd client && set PORT=3006 && set \"NODE_ENV=development\" && react-scripts start",
+    "build:client": "cd client && npm run build"
   },
   "dependencies": {
-    "classnames": "^2.3.1",
-    "emoji-picker-react": "^3.5.1",
-    "immer": "^9.0.15",
-    "nanoid": "^4.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-hot-toast": "^2.2.0",
-    "react-lottie": "^1.2.3",
-    "react-router-dom": "^6.3.0",
-    "react-scripts": "^5.0.1",
-    "sass": "^1.51.0",
-    "socket.io-client": "^4.5.1",
-    "typescript": "^4.1.2",
-    "zustand": "^3.7.1"
-  },
-  "scripts": {
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start-client": "set PORT=3006 && set \"NODE_ENV=development\" && react-scripts start",
-    "build-client": "react-scripts build",
-    "build": "react-scripts build && (cd socketio-server && yarn install)",
-    "start": "cd socketio-server && yarn start",
-    "lint": "tslint -c tslint.json src/**/*.{ts,tsx} --fix --format verbose"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "debug": "~4.3.4",
+    "express": "~4.17.3",
+    "http-errors": "~2.0.0",
+    "morgan": "~1.9.1",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "socket.io": "^4.5.4",
+    "ts-node": "^10.7.0",
+    "ejs": "^3.1.8"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/lodash-es": "^4.17.6",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@types/react-lottie": "^1.2.6",
-    "prettier": "^2.6.2",
-    "tslint": "^6.1.3",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.3.0",
-    "tslint-react": "^5.0.0"
+    "@types/node": "^17.0.21",
+    "nodemon": "^2.0.15",
+    "typescript": "^4.6.2"
   }
 }

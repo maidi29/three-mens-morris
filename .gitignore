@@ -2,7 +2,7 @@
 
 # dependencies
 /node_modules
-/socketio-server/node_modules
+/client/node_modules
 /.pnp
 .pnp.js
 

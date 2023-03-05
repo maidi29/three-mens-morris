@@ -7,7 +7,7 @@ const ensureSecure = require('./middlewares/ensureSecure');
 import "reflect-metadata";
 
  // const buildPath = path.join(__dirname, 'public');
-const buildPath = path.join(__dirname, '../..', 'build');
+const buildPath = path.join(__dirname, '../client', 'build');
 const environment = process.env;
 const app = express();
 if (environment.NODE_ENV === 'production') {

@@ -26,7 +26,7 @@ In the root project directory, run:
 
 to install all dependencies of server and client.
 
-(If you want to use npm you have to run `npm install` in the root project directory and in the ***socketio-server*** directory)
+(If you want to use npm you have to run `npm install` in the root project directory and in the ***client*** directory)
 
 ## Start in production
 
@@ -43,16 +43,16 @@ in the root project directory.
 
 ### Client
 Run 
-#### `yarn run start-client` (or `npm run start-client`)
-in the root directory of the project to start the react app and open in under [http://localhost:3006](http://localhost:3006) to 
+#### `yarn run start:client` (or `npm run start:client`)
+in the client directory of the project to start the react app and open in under [http://localhost:3006](http://localhost:3006) to 
 view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
 ### Server
 Run 
-#### `yarn run dev` (or `npm run dev`)
-in the ***socketio-server*** directory to start the backend under [http://localhost:3000](http://localhost:3000)
+#### `npm run dev`
+in the root directory to start the backend under [http://localhost:8080](http://localhost:3000)
 
 
 ## AI
