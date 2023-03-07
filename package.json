@@ -9,7 +9,7 @@
     "start": "set \"NODE_ENV=production\" && ts-node --transpile-only ./src/server.ts",
     "build": "cd client && npm ci && npm run build",
     "build:server": "rimraf build && set \"NODE_ENV=production\" && tsc -p tsconfig.json",
-    "start:client": "cd client && set PORT=3006 && set \"NODE_ENV=development\" && react-scripts start",
+    "start:client": "cd client && set PORT=3006 && set \"NODE_ENV=development\" && npm run start",
     "build:client": "cd client && npm run build"
   },
   "dependencies": {

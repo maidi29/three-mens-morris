@@ -44,7 +44,7 @@ in the root project directory.
 ### Client
 Run 
 #### `yarn run start:client` (or `npm run start:client`)
-in the client directory of the project to start the react app and open in under [http://localhost:3006](http://localhost:3006) to 
+in the root directory of the project to start the react app and open in under [http://localhost:3006](http://localhost:3006) to 
 view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.

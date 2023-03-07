@@ -12,7 +12,7 @@ interface MainProps {
 }
 export const Main = ({ room, me }: MainProps): JSX.Element => (
   <div className={styles.main}>
-    <h1>Three Men's Morris</h1>
+    <h1 className={styles.title}>Three Men's Morris</h1>
     {room && me ? <Game /> : <Start />}
     <div className={styles.howToPlay}>
       <Collapsible header="How to play">

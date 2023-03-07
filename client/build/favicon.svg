@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="500" height="500"><svg id="SvgjsSvg1000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
-    <rect width="490" height="490" rx="0" ry="0" transform="translate(5 5)" fill="none" stroke="#000" stroke-width="15" stroke-linecap="round"></rect>
-    <line x1="-245" y1="-245" x2="245" y2="245" transform="translate(250 250)" fill="none" stroke="#000" stroke-width="15"></line>
-    <line x1="245" y1="-245" x2="-245" y2="245" transform="translate(250 250)" fill="none" stroke="#000" stroke-width="15"></line>
-    <line x1="-245" y1="0" x2="245" y2="0" transform="translate(250 250)" fill="none" stroke="#000" stroke-width="15"></line>
-    <line x1="0" y1="240" x2="0" y2="-250" transform="translate(250 255)" fill="none" stroke="#000" stroke-width="15"></line>
-</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
-@media (prefers-color-scheme: dark) { :root { filter: invert(100%); } }
-</style></svg>

@@ -32,7 +32,6 @@ export default (httpServer) => {
       origin: [
         "http://localhost:3000",
         "http://localhost:3006",
-        "https://three-mens-morris.herokuapp.com",
         "https://www.three-mens-morris.com",
         "http://www.three-mens-morris.com",
         "https://three-mens-morris.com",
