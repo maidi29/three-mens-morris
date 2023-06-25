@@ -7,7 +7,7 @@ The winner is the first player to align their three tokens on a line drawn on th
 
 Play against a friend or the computer!
 
-![morris](public/images/morris.png)
+![morris](client/public/images/morris.png)
 
 The game consists of two phases
 
